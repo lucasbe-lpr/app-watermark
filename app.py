@@ -7,319 +7,488 @@ import io
 
 st.set_page_config(
     page_title="Luluflix",
-    page_icon="✦",
+    page_icon="▶",
     layout="centered",
     initial_sidebar_state="collapsed",
 )
 
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;1,8..60,300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Azeret+Mono:wght@300;400;500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
 
 :root {
-  --ink:       #111111;
-  --ink-light: #444444;
-  --rule:      #111111;
-  --cream:     #faf9f7;
-  --warm-bg:   #f3f1ee;
-  --border:    #d8d5d0;
-  --accent:    #111111;
-  --green:     #1a6b3a;
-  --red:       #b81c1c;
-  --amber:     #7a5c00;
-  --muted:     #888880;
+  --bg:        #0a0a0f;
+  --bg2:       #0f0f17;
+  --green:     #00ff41;
+  --green-dim: #007a1f;
+  --red:       #ff2d55;
+  --white:     #e8e8f0;
+  --muted:     #3a3a4a;
+  --border:    #1a1a2e;
+  --amber:     #ffbe0b;
+  --cyan:      #00d9f5;
 }
 
-*, *::before, *::after { box-sizing: border-box; }
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 html, body,
 [data-testid="stAppViewContainer"],
 [data-testid="stMain"],
-.main, .block-container {
-  background: var(--cream) !important;
-  color: var(--ink) !important;
+.main {
+  background: var(--bg) !important;
+  color: var(--white) !important;
+  font-family: 'Azeret Mono', monospace !important;
+}
+
+.block-container {
+  background: var(--bg) !important;
+  padding: 0 2rem 5rem !important;
+  max-width: 760px !important;
+}
+
+/* SCANLINES */
+[data-testid="stAppViewContainer"]::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0px,
+    transparent 3px,
+    rgba(0,0,0,0.18) 3px,
+    rgba(0,0,0,0.18) 4px
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* NOISE GRAIN */
+[data-testid="stAppViewContainer"]::before {
+  content: '';
+  position: fixed;
+  inset: -200%;
+  width: 400%;
+  height: 400%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  opacity: 0.4;
+  pointer-events: none;
+  z-index: 9998;
+  animation: grain 0.5s steps(2) infinite;
+}
+@keyframes grain {
+  0%,100% { transform: translate(0,0); }
+  25%      { transform: translate(-1%,-2%); }
+  50%      { transform: translate(1%,1%); }
+  75%      { transform: translate(-2%,1%); }
 }
 
 #MainMenu, footer, header,
 [data-testid="stToolbar"],
-[data-testid="stDecoration"] { display: none !important; visibility: hidden !important; }
+[data-testid="stDecoration"] { display: none !important; }
 
-.block-container {
-  padding: 0 1.5rem 4rem !important;
-  max-width: 700px !important;
+/* ══════════════════════════════
+   HEADER
+══════════════════════════════ */
+.site-header {
+  position: relative;
+  padding: 4rem 0 0;
+  margin-bottom: 0;
+  overflow: hidden;
+}
+.site-header-bg {
+  position: absolute;
+  top: 0; left: -2rem; right: -2rem;
+  height: 100%;
+  background: linear-gradient(180deg, #0f0f1f 0%, transparent 100%);
+  z-index: 0;
 }
 
-/* ─── MASTHEAD ─── */
-.masthead {
-  text-align: center;
-  padding: 3.5rem 0 0;
-  border-bottom: 3px solid var(--rule);
+.title-row {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: flex-end;
+  gap: 0;
 }
-.masthead-eyebrow {
-  font-family: 'Source Serif 4', Georgia, serif;
-  font-size: 0.62rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-bottom: 0.6rem;
+.title-main {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(6rem, 22vw, 11rem);
+  line-height: 0.85;
+  color: var(--white);
+  letter-spacing: 0.01em;
+  animation: flicker 8s infinite;
 }
-.masthead-title {
-  font-family: 'Playfair Display', 'Times New Roman', serif;
-  font-weight: 700;
-  font-style: italic;
-  font-size: clamp(4rem, 14vw, 7.5rem);
-  line-height: 0.92;
-  letter-spacing: -0.01em;
-  color: var(--ink);
-  margin: 0 0 0.5rem;
+@keyframes flicker {
+  0%,95%,97%,100% { opacity: 1; }
+  96%             { opacity: 0.6; }
+  96.5%           { opacity: 0.95; }
 }
-.masthead-rule-wrap {
+.title-accent {
+  color: var(--green);
+  text-shadow: 0 0 30px #00ff4177, 0 0 80px #00ff4133;
+}
+
+.header-meta {
+  position: relative;
+  z-index: 1;
   display: flex;
   align-items: center;
-  gap: 0.8rem;
-  margin: 0.8rem 0 0;
+  gap: 1.5rem;
+  margin-top: 0.6rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--muted);
 }
-.masthead-rule-wrap hr {
-  flex: 1;
-  border: none;
-  border-top: 1px solid var(--border);
-  margin: 0;
-}
-.masthead-date {
-  font-family: 'Source Serif 4', Georgia, serif;
-  font-size: 0.58rem;
-  letter-spacing: 0.15em;
+.header-badge {
+  font-size: 0.55rem;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--muted);
-  white-space: nowrap;
+  color: var(--bg);
+  background: var(--green);
+  padding: 0.2rem 0.5rem;
+  font-weight: 700;
+  font-family: 'Azeret Mono', monospace;
 }
-
-/* ─── SECTION LABELS (remplacement des panel-label) ─── */
-.section-head {
-  font-family: 'Source Serif 4', Georgia, serif;
+.header-status {
   font-size: 0.6rem;
-  font-weight: 400;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
+  letter-spacing: 0.15em;
   color: var(--muted);
-  padding: 1.4rem 0 0.5rem;
-  border-top: 1px solid var(--border);
-  margin-top: 1.2rem;
-  margin-bottom: 0.4rem;
 }
-.section-head:first-of-type { border-top: none; margin-top: 0; }
+.blink {
+  animation: blink 1.1s step-end infinite;
+  color: var(--green);
+}
+@keyframes blink { 50% { opacity: 0; } }
 
-/* ─── UPLOADER — visible, contrasté ─── */
-[data-testid="stFileUploader"] {
-  background: #ffffff !important;
-}
-[data-testid="stFileUploader"] section {
-  background: #ffffff !important;
-  border: 1.5px dashed #999 !important;
-  border-radius: 0 !important;
-  padding: 1.4rem !important;
-  transition: border-color 0.2s, background 0.2s !important;
-  cursor: pointer !important;
-}
-[data-testid="stFileUploader"] section:hover,
-[data-testid="stFileUploader"] section:focus-within {
-  border-color: var(--ink) !important;
-  background: var(--warm-bg) !important;
-}
-/* Texte interne de l'uploader */
-[data-testid="stFileUploader"] section * {
-  color: var(--ink-light) !important;
-  font-family: 'Source Serif 4', Georgia, serif !important;
-  font-size: 0.82rem !important;
-}
-[data-testid="stFileUploaderDropzoneInstructions"] span {
-  color: var(--ink) !important;
-  font-size: 0.85rem !important;
-}
-/* Bouton "Browse files" */
-[data-testid="stFileUploader"] section button,
-[data-testid="stBaseButton-secondary"] {
-  background: var(--ink) !important;
-  color: #fff !important;
-  border: none !important;
-  border-radius: 0 !important;
-  font-family: 'Source Serif 4', Georgia, serif !important;
-  font-size: 0.72rem !important;
-  letter-spacing: 0.08em !important;
-  padding: 0.4rem 0.9rem !important;
-  margin-top: 0.5rem !important;
-  cursor: pointer !important;
-}
-[data-testid="stFileUploader"] section button:hover {
-  background: #333 !important;
-}
-/* Nom du fichier chargé */
-[data-testid="stFileUploaderFileName"] {
-  color: var(--ink) !important;
-  font-weight: 600 !important;
-  font-size: 0.8rem !important;
-}
-
-/* ─── TABS ─── */
+/* ══════════════════════════════
+   TABS
+══════════════════════════════ */
 div[data-testid="stTabs"] [data-baseweb="tab-list"] {
   background: transparent !important;
-  border-bottom: 2px solid var(--rule) !important;
+  border-bottom: 1px solid var(--muted) !important;
   gap: 0 !important;
-  margin-top: 2rem !important;
-  margin-bottom: 0 !important;
+  margin: 2rem 0 0 !important;
+  padding: 0 !important;
 }
 div[data-testid="stTabs"] [data-baseweb="tab"] {
   background: transparent !important;
   border: none !important;
-  color: var(--muted) !important;
-  font-family: 'Source Serif 4', Georgia, serif !important;
-  font-size: 0.7rem !important;
-  letter-spacing: 0.15em !important;
-  text-transform: uppercase !important;
-  padding: 0.55rem 1.6rem 0.55rem 0 !important;
   border-bottom: 2px solid transparent !important;
-  margin-bottom: -2px !important;
+  margin-bottom: -1px !important;
+  color: var(--muted) !important;
+  font-family: 'Azeret Mono', monospace !important;
+  font-size: 0.62rem !important;
+  letter-spacing: 0.2em !important;
+  text-transform: uppercase !important;
+  padding: 0.7rem 2rem 0.7rem 0 !important;
+  transition: color 0.15s !important;
 }
 div[data-testid="stTabs"] [aria-selected="true"] {
-  color: var(--ink) !important;
-  border-bottom: 2px solid var(--ink) !important;
+  color: var(--green) !important;
+  border-bottom: 2px solid var(--green) !important;
+}
+div[data-testid="stTabs"] [data-baseweb="tab"]:hover {
+  color: var(--white) !important;
 }
 
-/* ─── SPECS BAND ─── */
-.specs-band {
-  display: flex;
-  gap: 2.5rem;
-  padding: 0.9rem 0;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-  margin: 1.2rem 0 1.4rem;
+/* ══════════════════════════════
+   SECTION NUMBERS
+══════════════════════════════ */
+.section-block {
+  position: relative;
+  margin-top: 2.5rem;
 }
-.spec-item { display: flex; flex-direction: column; gap: 0.18rem; }
+.section-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 5rem;
+  line-height: 1;
+  color: var(--border);
+  position: absolute;
+  top: -1.2rem;
+  left: -0.5rem;
+  z-index: 0;
+  pointer-events: none;
+  user-select: none;
+}
+.section-label {
+  position: relative;
+  z-index: 1;
+  font-size: 0.58rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  margin-bottom: 0.6rem;
+  padding-left: 0.2rem;
+  font-family: 'Azeret Mono', monospace;
+}
+
+/* ══════════════════════════════
+   UPLOAD TERMINAL
+══════════════════════════════ */
+[data-testid="stFileUploader"] {
+  background: transparent !important;
+  position: relative;
+  z-index: 1;
+}
+[data-testid="stFileUploader"] section {
+  background: var(--bg2) !important;
+  border: 1px solid var(--muted) !important;
+  border-radius: 0 !important;
+  padding: 1.6rem 1.4rem !important;
+  transition: border-color 0.2s, background 0.2s !important;
+  position: relative !important;
+}
+/* coin supérieur gauche style terminal */
+[data-testid="stFileUploader"] section::before {
+  content: '> _';
+  position: absolute;
+  top: 0.5rem;
+  left: 0.7rem;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.55rem;
+  color: var(--green-dim);
+  letter-spacing: 0.1em;
+}
+[data-testid="stFileUploader"] section:hover,
+[data-testid="stFileUploader"] section:focus-within {
+  border-color: var(--green) !important;
+  background: #0d1a0d !important;
+  box-shadow: 0 0 20px #00ff411a inset !important;
+}
+[data-testid="stFileUploaderDropzoneInstructions"] * {
+  color: var(--white) !important;
+  font-family: 'Space Mono', monospace !important;
+  font-size: 0.78rem !important;
+}
+[data-testid="stFileUploaderDropzoneInstructions"] small {
+  color: var(--muted) !important;
+  font-size: 0.62rem !important;
+}
+/* Browse button */
+[data-testid="stFileUploader"] button,
+[data-testid="stBaseButton-secondary"] {
+  background: transparent !important;
+  border: 1px solid var(--green) !important;
+  color: var(--green) !important;
+  font-family: 'Space Mono', monospace !important;
+  font-size: 0.62rem !important;
+  letter-spacing: 0.1em !important;
+  padding: 0.35rem 0.9rem !important;
+  border-radius: 0 !important;
+  transition: all 0.15s !important;
+  margin-top: 0.4rem !important;
+}
+[data-testid="stFileUploader"] button:hover {
+  background: var(--green) !important;
+  color: var(--bg) !important;
+}
+[data-testid="stFileUploaderFileName"] {
+  color: var(--amber) !important;
+  font-family: 'Space Mono', monospace !important;
+  font-size: 0.72rem !important;
+}
+
+/* ══════════════════════════════
+   SPECS
+══════════════════════════════ */
+.specs-band {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  border: 1px solid var(--muted);
+  margin: 1.8rem 0;
+  background: var(--bg2);
+}
+.spec-item {
+  padding: 0.8rem 1rem;
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.spec-item:last-child { border-right: none; }
 .spec-key {
-  font-family: 'Source Serif 4', Georgia, serif;
-  font-size: 0.52rem;
-  letter-spacing: 0.2em;
+  font-size: 0.48rem;
+  letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--muted);
+  font-family: 'Azeret Mono', monospace;
 }
 .spec-val {
-  font-family: 'Playfair Display', 'Times New Roman', serif;
-  font-size: 0.95rem;
-  color: var(--ink);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.4rem;
+  color: var(--green);
+  line-height: 1;
+  letter-spacing: 0.03em;
 }
 
-/* ─── PREVIEW ─── */
-.preview-wrap {
-  border: 1px solid var(--border);
-  overflow: hidden;
-  margin-bottom: 1.4rem;
-  background: #eee;
+/* ══════════════════════════════
+   PREVIEW
+══════════════════════════════ */
+.preview-shell {
+  border: 1px solid var(--muted);
+  background: #000;
+  margin-bottom: 1.5rem;
 }
-.preview-cap {
-  font-family: 'Source Serif 4', Georgia, serif;
-  font-size: 0.6rem;
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: var(--muted);
-  padding: 0.4rem 0;
+.preview-topbar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  background: var(--bg2);
   border-bottom: 1px solid var(--border);
-  margin-bottom: 0;
-  text-align: center;
+}
+.preview-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--muted);
+}
+.preview-dot.g { background: var(--green); box-shadow: 0 0 5px var(--green); }
+.preview-title-bar {
+  font-family: 'Space Mono', monospace;
+  font-size: 0.52rem;
+  color: var(--muted);
+  letter-spacing: 0.12em;
+  margin-left: 0.3rem;
 }
 
-/* ─── BUTTONS ─── */
+/* ══════════════════════════════
+   BUTTONS
+══════════════════════════════ */
 div.stButton > button {
   width: 100% !important;
-  background: var(--ink) !important;
-  border: none !important;
-  color: #fff !important;
-  font-family: 'Source Serif 4', Georgia, serif !important;
-  font-size: 0.72rem !important;
-  font-weight: 400 !important;
-  letter-spacing: 0.15em !important;
-  text-transform: uppercase !important;
-  padding: 0.8rem 1rem !important;
+  background: transparent !important;
+  border: 1px solid var(--white) !important;
+  color: var(--white) !important;
+  font-family: 'Bebas Neue', sans-serif !important;
+  font-size: 1.35rem !important;
+  letter-spacing: 0.12em !important;
+  padding: 0.7rem 1rem !important;
   border-radius: 0 !important;
-  transition: background 0.15s !important;
-  cursor: pointer !important;
+  transition: all 0.15s !important;
+  line-height: 1 !important;
 }
-div.stButton > button:hover { background: #333 !important; }
-div.stButton > button:disabled { background: var(--border) !important; color: var(--muted) !important; }
+div.stButton > button:hover {
+  background: var(--white) !important;
+  color: var(--bg) !important;
+  box-shadow: 0 0 25px rgba(232,232,240,0.15) !important;
+}
+div.stButton > button:disabled {
+  border-color: var(--muted) !important;
+  color: var(--muted) !important;
+}
 
 div[data-testid="stDownloadButton"] > button {
   width: 100% !important;
   background: var(--green) !important;
   border: none !important;
-  color: #fff !important;
-  font-family: 'Source Serif 4', Georgia, serif !important;
-  font-size: 0.72rem !important;
-  letter-spacing: 0.15em !important;
-  text-transform: uppercase !important;
-  padding: 0.8rem 1rem !important;
+  color: var(--bg) !important;
+  font-family: 'Bebas Neue', sans-serif !important;
+  font-size: 1.35rem !important;
+  letter-spacing: 0.12em !important;
+  padding: 0.7rem 1rem !important;
   border-radius: 0 !important;
-  cursor: pointer !important;
+  font-weight: 400 !important;
+  box-shadow: 0 0 30px #00ff4133 !important;
+  line-height: 1 !important;
 }
-div[data-testid="stDownloadButton"] > button:hover { background: #125029 !important; }
+div[data-testid="stDownloadButton"] > button:hover {
+  background: #33ff6a !important;
+}
 
-/* ─── PROGRESS ─── */
+/* ══════════════════════════════
+   PROGRESS
+══════════════════════════════ */
 div[data-testid="stProgress"] > div {
   background: var(--border) !important;
   border-radius: 0 !important;
-  height: 3px !important;
+  height: 4px !important;
 }
 div[data-testid="stProgress"] > div > div {
-  background: var(--ink) !important;
+  background: var(--green) !important;
   border-radius: 0 !important;
+  box-shadow: 0 0 8px var(--green) !important;
+}
+div[data-testid="stProgress"] p {
+  font-family: 'Space Mono', monospace !important;
+  font-size: 0.6rem !important;
+  color: var(--muted) !important;
+  letter-spacing: 0.12em !important;
 }
 
-/* ─── STATUS ─── */
+/* ══════════════════════════════
+   STATUS
+══════════════════════════════ */
 .status {
-  font-family: 'Source Serif 4', Georgia, serif;
-  font-size: 0.72rem;
-  letter-spacing: 0.06em;
-  padding: 0.55rem 0.8rem;
+  font-family: 'Space Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  padding: 0.6rem 0.8rem;
   border-left: 2px solid;
   margin: 0.8rem 0;
+  line-height: 1.6;
 }
-.status-ok   { border-color: var(--green); color: var(--green); background: #f0faf4; }
-.status-warn { border-color: var(--amber); color: var(--amber); background: #fdf8ec; }
-.status-err  { border-color: var(--red);   color: var(--red);   background: #fdf0f0; }
+.status::before { margin-right: 0.5rem; }
+.status-ok   { border-color: var(--green); color: var(--green); background: #001a00; }
+.status-ok::before { content: '✓'; }
+.status-warn { border-color: var(--amber); color: var(--amber); background: #1a1200; }
+.status-warn::before { content: '⧖'; }
+.status-err  { border-color: var(--red);   color: var(--red);   background: #1a0000; }
+.status-err::before  { content: '✗'; }
 .status-idle { border-color: var(--border); color: var(--muted); }
+.status-idle::before { content: '○'; }
 
-/* ─── FOOTER ─── */
+/* ══════════════════════════════
+   FOOTER
+══════════════════════════════ */
 .footer {
-  margin-top: 4rem;
-  padding-top: 1rem;
-  border-top: 3px solid var(--rule);
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  font-family: 'Source Serif 4', Georgia, serif;
-  font-size: 0.6rem;
-  letter-spacing: 0.1em;
-  color: var(--muted);
+  margin-top: 5rem;
+  padding: 1.2rem 0;
+  border-top: 1px solid var(--muted);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 1rem;
 }
 .footer-name {
-  font-family: 'Playfair Display', 'Times New Roman', serif;
-  font-style: italic;
-  font-size: 0.78rem;
-  color: var(--ink);
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 0.08em;
+  color: var(--green);
+}
+.footer-legal {
+  font-family: 'Azeret Mono', monospace;
+  font-size: 0.5rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-align: right;
+}
+
+/* Spinner */
+div[data-testid="stSpinner"] p {
+  font-family: 'Space Mono', monospace !important;
+  font-size: 0.62rem !important;
+  color: var(--muted) !important;
+  letter-spacing: 0.1em !important;
 }
 </style>
 """, unsafe_allow_html=True)
 
-# ─── MASTHEAD ─────────────────────────────────────────────────────────────────
+# ── HEADER ────────────────────────────────────────────────────────────────────
 st.markdown("""
-<div class="masthead">
-  <p class="masthead-eyebrow">Outil d'incrustation de logo</p>
-  <h1 class="masthead-title">Luluflix</h1>
-  <div class="masthead-rule-wrap">
-    <hr/><span class="masthead-date">Usage interne</span><hr/>
+<div class="site-header">
+  <div class="site-header-bg"></div>
+  <div class="title-row">
+    <span class="title-main">LULU<span class="title-accent">FLIX</span></span>
+  </div>
+  <div class="header-meta">
+    <span class="header-badge">v1.0</span>
+    <span class="header-status">WATERMARK ENGINE <span class="blink">█</span></span>
   </div>
 </div>
 """, unsafe_allow_html=True)
 
-# ─── HELPERS ──────────────────────────────────────────────────────────────────
+# ── HELPERS ───────────────────────────────────────────────────────────────────
 
 def composite_logo(base: Image.Image, logo_path: str) -> Image.Image:
     W, H = base.size
@@ -328,10 +497,8 @@ def composite_logo(base: Image.Image, logo_path: str) -> Image.Image:
     ratio = logo_w / logo.width
     logo_h = int(logo.height * ratio)
     logo = logo.resize((logo_w, logo_h), Image.LANCZOS)
-    margin_x = int(W * 0.05)
-    margin_y = int(H * 0.07)
-    x = W - logo_w - margin_x
-    y = margin_y
+    x = W - logo_w - int(W * 0.05)
+    y = int(H * 0.07)
     out = base.convert("RGBA")
     out.paste(logo, (x, y), logo)
     return out
@@ -342,8 +509,7 @@ def get_video_info(path: str) -> dict:
         "-select_streams", "v:0",
         "-show_entries", "stream=width,height,r_frame_rate",
         "-show_entries", "format=duration",
-        "-of", "default=noprint_wrappers=1:nokey=0",
-        path
+        "-of", "default=noprint_wrappers=1:nokey=0", path
     ]
     result = subprocess.run(cmd, capture_output=True, text=True)
     info = {}
@@ -363,38 +529,32 @@ def get_video_info(path: str) -> dict:
     return {"width": w, "height": h, "duration": dur, "fps": fps}
 
 def make_thumbnail(video_path: str, logo_path: str, info: dict) -> Image.Image:
-    frame_cmd = [
+    result = subprocess.run([
         "ffmpeg", "-y", "-i", video_path,
         "-vframes", "1", "-f", "image2pipe", "-vcodec", "png", "pipe:1"
-    ]
-    result = subprocess.run(frame_cmd, capture_output=True)
+    ], capture_output=True)
     frame = Image.open(io.BytesIO(result.stdout)).convert("RGBA")
     return composite_logo(frame, logo_path).convert("RGB")
 
-def render_video(video_path: str, logo_path: str, output_path: str, info: dict, progress_cb=None):
+def render_video(video_path, logo_path, output_path, info, progress_cb=None):
     W, H = info["width"], info["height"]
     logo_w = int(W * 0.15)
     x = W - logo_w - int(W * 0.05)
     y = int(H * 0.07)
-    filter_complex = (
-        f"[1:v]scale={logo_w}:-1[logo];"
-        f"[0:v][logo]overlay={x}:{y}"
-    )
+    filter_complex = f"[1:v]scale={logo_w}:-1[logo];[0:v][logo]overlay={x}:{y}"
     cmd = [
         "ffmpeg", "-y",
         "-i", video_path, "-i", logo_path,
         "-filter_complex", filter_complex,
         "-c:v", "libx264", "-crf", "18", "-preset", "fast",
         "-c:a", "copy", "-movflags", "+faststart",
-        "-progress", "pipe:1",
-        output_path
+        "-progress", "pipe:1", output_path
     ]
     process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
     total = info["duration"]
     while True:
         line = process.stdout.readline()
-        if not line:
-            break
+        if not line: break
         if line.strip().startswith("out_time_ms="):
             try:
                 ms = int(line.strip().split("=")[1])
@@ -406,25 +566,35 @@ def render_video(video_path: str, logo_path: str, output_path: str, info: dict, 
     if process.returncode != 0:
         raise RuntimeError(process.stderr.read())
 
-# ─── SESSION STATE ─────────────────────────────────────────────────────────────
+# ── SESSION STATE ──────────────────────────────────────────────────────────────
 for k in ["thumbnail", "rendered_bytes"]:
     if k not in st.session_state:
         st.session_state[k] = None
 
-# ─── TABS ──────────────────────────────────────────────────────────────────────
-tab_v, tab_p = st.tabs(["Vidéo", "Photo"])
+# ── TABS ───────────────────────────────────────────────────────────────────────
+tab_v, tab_p = st.tabs(["// VIDÉO", "// PHOTO"])
 
-# ══════════════════════════════════ VIDÉO ═════════════════════════════════════
+# ══════════════════════ VIDÉO ══════════════════════════════════════════════════
 with tab_v:
 
-    st.markdown('<p class="section-head">Source</p>', unsafe_allow_html=True)
+    st.markdown("""
+    <div class="section-block">
+      <span class="section-num">01</span>
+      <p class="section-label">Fichier source</p>
+    </div>
+    """, unsafe_allow_html=True)
     video_file = st.file_uploader(
         "Déposez votre vidéo ici",
         type=["mp4", "mov", "avi", "mkv", "webm"],
         key="vu"
     )
 
-    st.markdown('<p class="section-head">Logo — PNG transparent</p>', unsafe_allow_html=True)
+    st.markdown("""
+    <div class="section-block">
+      <span class="section-num">02</span>
+      <p class="section-label">Logo PNG transparent</p>
+    </div>
+    """, unsafe_allow_html=True)
     logo_v = st.file_uploader(
         "Déposez votre logo ici",
         type=["png"],
@@ -444,8 +614,12 @@ with tab_v:
         st.markdown(f"""
         <div class="specs-band">
           <div class="spec-item">
-            <span class="spec-key">Résolution</span>
-            <span class="spec-val">{nfo['width']}×{nfo['height']}</span>
+            <span class="spec-key">Largeur</span>
+            <span class="spec-val">{nfo['width']}</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-key">Hauteur</span>
+            <span class="spec-val">{nfo['height']}</span>
           </div>
           <div class="spec-item">
             <span class="spec-key">Durée</span>
@@ -455,60 +629,75 @@ with tab_v:
             <span class="spec-key">FPS</span>
             <span class="spec-val">{nfo['fps']}</span>
           </div>
-          <div class="spec-item">
-            <span class="spec-key">Logo</span>
-            <span class="spec-val">{int(nfo['width']*0.15)} px</span>
-          </div>
         </div>
         """, unsafe_allow_html=True)
 
         if st.session_state.thumbnail is None:
-            with st.spinner("Génération de l'aperçu…"):
+            with st.spinner("// chargement aperçu..."):
                 st.session_state.thumbnail = make_thumbnail(vp, lp, nfo)
 
-        st.markdown('<div class="preview-wrap"><p class="preview-cap">Aperçu — première image</p>', unsafe_allow_html=True)
+        st.markdown("""
+        <div class="preview-shell">
+          <div class="preview-topbar">
+            <div class="preview-dot"></div>
+            <div class="preview-dot"></div>
+            <div class="preview-dot g"></div>
+            <span class="preview-title-bar">PREVIEW — FRAME 0001</span>
+          </div>
+        </div>
+        """, unsafe_allow_html=True)
         st.image(st.session_state.thumbnail, use_container_width=True)
-        st.markdown('</div>', unsafe_allow_html=True)
 
-        if st.button("Générer le rendu", key="vbtn",
+        st.markdown("<br>", unsafe_allow_html=True)
+
+        if st.button("GÉNÉRER LE RENDU", key="vbtn",
                      disabled=bool(st.session_state.rendered_bytes)):
             out = os.path.join(tmp, "video_ready_to_post.mp4")
             ph_p, ph_s = st.empty(), st.empty()
             bar = ph_p.progress(0.0, text="")
-            ph_s.markdown('<div class="status status-warn">Traitement en cours…</div>', unsafe_allow_html=True)
+            ph_s.markdown('<div class="status status-warn">TRAITEMENT EN COURS...</div>', unsafe_allow_html=True)
             try:
                 render_video(vp, lp, out, nfo,
-                             lambda p: bar.progress(p, text=f"{int(p*100)} %"))
-                bar.progress(1.0, text="100 %")
-                ph_s.markdown('<div class="status status-ok">Rendu terminé.</div>', unsafe_allow_html=True)
+                             lambda p: bar.progress(p, text=f"// {int(p*100)}% ENCODÉ"))
+                bar.progress(1.0, text="// 100% ENCODÉ")
+                ph_s.markdown('<div class="status status-ok">RENDER COMPLETE — FICHIER PRÊT</div>', unsafe_allow_html=True)
                 with open(out, "rb") as f:
                     st.session_state.rendered_bytes = f.read()
             except Exception as e:
-                ph_s.markdown(f'<div class="status status-err">{e}</div>', unsafe_allow_html=True)
+                ph_s.markdown(f'<div class="status status-err">ERREUR: {e}</div>', unsafe_allow_html=True)
 
         if st.session_state.rendered_bytes:
             st.download_button(
-                "Télécharger la vidéo",
+                "↓ TÉLÉCHARGER LA VIDÉO",
                 data=st.session_state.rendered_bytes,
                 file_name="video_ready_to_post.mp4",
                 mime="video/mp4",
                 key="vdl"
             )
     else:
-        st.markdown('<div class="status status-idle">Déposez une vidéo et un logo pour commencer.</div>', unsafe_allow_html=True)
+        st.markdown('<div class="status status-idle">EN ATTENTE D\'INPUT...</div>', unsafe_allow_html=True)
 
-
-# ══════════════════════════════════ PHOTO ═════════════════════════════════════
+# ══════════════════════ PHOTO ══════════════════════════════════════════════════
 with tab_p:
 
-    st.markdown('<p class="section-head">Source</p>', unsafe_allow_html=True)
+    st.markdown("""
+    <div class="section-block">
+      <span class="section-num">01</span>
+      <p class="section-label">Image source</p>
+    </div>
+    """, unsafe_allow_html=True)
     photo_file = st.file_uploader(
         "Déposez votre image ici",
         type=["png", "jpg", "jpeg"],
         key="pu"
     )
 
-    st.markdown('<p class="section-head">Logo — PNG transparent</p>', unsafe_allow_html=True)
+    st.markdown("""
+    <div class="section-block">
+      <span class="section-num">02</span>
+      <p class="section-label">Logo PNG transparent</p>
+    </div>
+    """, unsafe_allow_html=True)
     logo_p = st.file_uploader(
         "Déposez votre logo ici",
         type=["png"],
@@ -522,28 +711,41 @@ with tab_p:
         lp2 = os.path.join(tmp2, "logo.png")
         with open(lp2, "wb") as f: f.write(logo_p.read())
 
+        fmt = (base.format or photo_file.name.rsplit(".", 1)[-1]).upper()
         st.markdown(f"""
         <div class="specs-band">
           <div class="spec-item">
-            <span class="spec-key">Résolution</span>
-            <span class="spec-val">{W}×{H}</span>
+            <span class="spec-key">Largeur</span>
+            <span class="spec-val">{W}</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-key">Hauteur</span>
+            <span class="spec-val">{H}</span>
           </div>
           <div class="spec-item">
             <span class="spec-key">Format</span>
-            <span class="spec-val">{(base.format or photo_file.name.rsplit(".",1)[-1]).upper()}</span>
+            <span class="spec-val">{fmt}</span>
           </div>
           <div class="spec-item">
             <span class="spec-key">Logo</span>
-            <span class="spec-val">{int(W*0.15)} px</span>
+            <span class="spec-val">{int(W*0.15)}px</span>
           </div>
         </div>
         """, unsafe_allow_html=True)
 
         result_img = composite_logo(base, lp2)
 
-        st.markdown('<div class="preview-wrap"><p class="preview-cap">Aperçu</p>', unsafe_allow_html=True)
+        st.markdown("""
+        <div class="preview-shell">
+          <div class="preview-topbar">
+            <div class="preview-dot"></div>
+            <div class="preview-dot"></div>
+            <div class="preview-dot g"></div>
+            <span class="preview-title-bar">PREVIEW — OUTPUT</span>
+          </div>
+        </div>
+        """, unsafe_allow_html=True)
         st.image(result_img.convert("RGB"), use_container_width=True)
-        st.markdown('</div>', unsafe_allow_html=True)
 
         buf = io.BytesIO()
         ext = photo_file.name.rsplit(".", 1)[-1].lower()
@@ -554,22 +756,21 @@ with tab_p:
             result_img.convert("RGB").save(buf, format="JPEG", quality=97, subsampling=0)
             fname, mime = "photo_ready_to_post.jpg", "image/jpeg"
 
-        st.markdown('<div class="status status-ok">Prêt.</div>', unsafe_allow_html=True)
+        st.markdown('<div class="status status-ok">OUTPUT READY</div>', unsafe_allow_html=True)
         st.download_button(
-            "Télécharger la photo",
+            "↓ TÉLÉCHARGER LA PHOTO",
             data=buf.getvalue(),
             file_name=fname,
             mime=mime,
             key="pdl"
         )
     else:
-        st.markdown('<div class="status status-idle">Déposez une image et un logo pour commencer.</div>', unsafe_allow_html=True)
+        st.markdown('<div class="status status-idle">EN ATTENTE D\'INPUT...</div>', unsafe_allow_html=True)
 
-
-# ─── FOOTER ───────────────────────────────────────────────────────────────────
+# ── FOOTER ─────────────────────────────────────────────────────────────────────
 st.markdown("""
 <div class="footer">
-  <span class="footer-name">Lucas Bessonnat</span>
-  <span>Aucune donnée n'est conservée sur un serveur</span>
+  <span class="footer-name">LUCAS BESSONNAT</span>
+  <span class="footer-legal">Aucune donnée n'est conservée sur un serveur</span>
 </div>
 """, unsafe_allow_html=True)

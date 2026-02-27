@@ -5,202 +5,263 @@ import os
 from PIL import Image
 import io
 
-# ─── PAGE CONFIG ──────────────────────────────────────────────────────────────
 st.set_page_config(
     page_title="Luluflix",
-    page_icon="🇫🇷",
+    page_icon="✦",
     layout="centered",
     initial_sidebar_state="collapsed",
 )
 
-# ─── CSS : STYLE GOUVERNEMENT FRANÇAIS ────────────────────────────────────────
 st.markdown("""
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=DM+Mono:wght@300;400&display=swap');
+
 :root {
-  --bleu:    #003189;
-  --rouge:   #e1000f;
-  --blanc:   #ffffff;
-  --gris-bg: #f5f5f5;
-  --gris-bd: #cccccc;
-  --gris-txt:#6b6b6b;
-  --noir:    #1a1a1a;
-  --vert:    #008941;
+  --bg:      #0c0c0e;
+  --surface: #131316;
+  --border:  #222228;
+  --gold:    #c9a96e;
+  --gold2:   #e8c98a;
+  --white:   #f0ede8;
+  --muted:   #555560;
+  --green:   #4caf7d;
+  --red:     #e05252;
+  --amber:   #d4a843;
 }
 
-html, body, [data-testid="stAppViewContainer"] {
-  background: var(--gris-bg) !important;
-  color: var(--noir) !important;
-  font-family: Arial, Helvetica, sans-serif !important;
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body, [data-testid="stAppViewContainer"],
+[data-testid="stMain"], .main, .block-container {
+  background: var(--bg) !important;
+  color: var(--white) !important;
+  font-family: 'DM Mono', monospace !important;
 }
 
-/* Hide Streamlit branding */
-#MainMenu, footer, header { visibility: hidden; }
-[data-testid="stToolbar"] { display: none; }
-[data-testid="stDecoration"] { display: none; }
+#MainMenu, footer, header,
+[data-testid="stToolbar"],
+[data-testid="stDecoration"] { display: none !important; visibility: hidden !important; }
 
-/* ── BANDEAU TRICOLORE EN HAUT ── */
-.bandeau {
-  height: 7px;
-  background: linear-gradient(to right,
-    var(--bleu) 33.3%,
-    var(--blanc) 33.3%, var(--blanc) 66.6%,
-    var(--rouge) 66.6%);
-  margin-bottom: 0;
-  border-bottom: 1px solid var(--gris-bd);
-}
+.block-container { padding: 0 1rem 3rem !important; max-width: 680px !important; }
 
-/* ── HEADER ── */
-.header-block {
-  background: var(--blanc);
-  border-bottom: 2px solid var(--bleu);
-  padding: 1rem 1.5rem 0.9rem;
-  margin-bottom: 1.5rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+/* ── HERO ── */
+.hero {
+  padding: 5rem 0 3.5rem;
+  text-align: center;
+  position: relative;
 }
-.header-title {
-  font-size: 1.55rem;
-  font-weight: bold;
-  color: var(--bleu);
+.hero-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-weight: 300;
+  font-size: clamp(5rem, 16vw, 9rem);
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  color: var(--white);
   margin: 0;
-  line-height: 1.1;
+  animation: fadeUp 0.9s cubic-bezier(0.16,1,0.3,1) both;
 }
-.header-sub {
-  font-size: 0.68rem;
-  color: var(--gris-txt);
-  margin-top: 0.15rem;
+.hero-title em {
   font-style: italic;
+  color: var(--gold);
+}
+.hero-rule {
+  width: 40px;
+  height: 1px;
+  background: var(--gold);
+  margin: 1.8rem auto 0;
+  opacity: 0.6;
+  animation: fadeUp 0.9s 0.15s cubic-bezier(0.16,1,0.3,1) both;
+}
+@keyframes fadeUp {
+  from { opacity:0; transform:translateY(18px); }
+  to   { opacity:1; transform:translateY(0); }
 }
 
-/* ── ONGLETS ── */
+/* ── TABS ── */
 div[data-testid="stTabs"] [data-baseweb="tab-list"] {
-  background: var(--gris-bg) !important;
-  border-bottom: 2px solid var(--bleu) !important;
+  background: transparent !important;
+  border-bottom: 1px solid var(--border) !important;
   gap: 0 !important;
-  padding: 0 !important;
+  margin-bottom: 2rem !important;
 }
 div[data-testid="stTabs"] [data-baseweb="tab"] {
-  background: #e8e8e8 !important;
-  border: 1px solid var(--gris-bd) !important;
-  border-bottom: none !important;
-  border-radius: 0 !important;
-  color: var(--gris-txt) !important;
-  font-size: 0.78rem !important;
-  font-weight: bold !important;
-  padding: 0.5rem 1.5rem !important;
+  background: transparent !important;
+  border: none !important;
+  color: var(--muted) !important;
+  font-family: 'DM Mono', monospace !important;
+  font-size: 0.65rem !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.18em !important;
   text-transform: uppercase !important;
-  letter-spacing: 0.05em !important;
-  margin-right: 3px !important;
+  padding: 0.6rem 1.6rem !important;
+  border-bottom: 1px solid transparent !important;
+  transition: color 0.2s !important;
 }
 div[data-testid="stTabs"] [aria-selected="true"] {
-  background: var(--blanc) !important;
-  color: var(--bleu) !important;
-  border-top: 3px solid var(--bleu) !important;
+  color: var(--gold) !important;
+  border-bottom: 1px solid var(--gold) !important;
+}
+div[data-testid="stTabs"] [data-baseweb="tab"]:hover {
+  color: var(--white) !important;
 }
 
-/* ── ENCADRÉS ── */
-.encadre {
-  background: var(--blanc);
-  border: 1px solid var(--gris-bd);
-  border-left: 4px solid var(--bleu);
-  padding: 1rem 1.2rem;
-  margin-bottom: 1rem;
-}
-.encadre-label {
-  font-size: 0.65rem;
-  font-weight: bold;
+/* ── UPLOAD ZONES ── */
+.upload-wrap { margin-bottom: 1rem; }
+.upload-label {
+  font-size: 0.58rem;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--bleu);
-  margin-bottom: 0.6rem;
-  padding-bottom: 0.4rem;
-  border-bottom: 1px solid #e8e8e8;
+  color: var(--muted);
+  margin-bottom: 0.5rem;
 }
-.encadre-info {
-  font-size: 0.78rem;
-  color: var(--gris-txt);
-  line-height: 2;
+[data-testid="stFileUploader"] > div {
+  background: var(--surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 2px !important;
+  transition: border-color 0.2s !important;
 }
-.encadre-info b { color: var(--noir); }
+[data-testid="stFileUploader"] > div:hover {
+  border-color: var(--gold) !important;
+}
+[data-testid="stFileUploader"] label,
+[data-testid="stFileUploaderDropzoneInstructions"] {
+  color: var(--muted) !important;
+  font-family: 'DM Mono', monospace !important;
+  font-size: 0.72rem !important;
+}
+[data-testid="stFileUploaderFileName"] {
+  color: var(--white) !important;
+  font-size: 0.72rem !important;
+}
 
-/* ── UPLOADER ── */
-[data-testid="stFileUploader"] {
-  background: var(--blanc) !important;
-  border: 1px dashed var(--gris-bd) !important;
-  border-radius: 0 !important;
+/* ── SPECS BAND ── */
+.specs-band {
+  display: flex;
+  gap: 2rem;
+  padding: 1rem 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  margin: 1.5rem 0;
+  animation: fadeUp 0.5s cubic-bezier(0.16,1,0.3,1) both;
 }
-[data-testid="stFileUploader"]:hover { border-color: var(--bleu) !important; }
+.spec-item { display: flex; flex-direction: column; gap: 0.2rem; }
+.spec-key  { font-size: 0.52rem; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
+.spec-val  { font-size: 0.8rem; color: var(--white); }
 
-/* ── BOUTON PRINCIPAL ── */
+/* ── PREVIEW ── */
+.preview-wrap {
+  border: 1px solid var(--border);
+  overflow: hidden;
+  margin-bottom: 1.5rem;
+  background: #000;
+  position: relative;
+}
+.preview-label {
+  position: absolute; top: 0.6rem; left: 0.8rem;
+  font-size: 0.5rem; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--gold);
+  opacity: 0.7; z-index: 2;
+}
+
+/* ── BUTTONS ── */
 div.stButton > button {
   width: 100%;
-  background: var(--bleu) !important;
-  border: none !important;
-  color: var(--blanc) !important;
-  font-family: Arial, Helvetica, sans-serif !important;
-  font-size: 0.85rem !important;
-  font-weight: bold !important;
+  background: transparent !important;
+  border: 1px solid var(--gold) !important;
+  color: var(--gold) !important;
+  font-family: 'DM Mono', monospace !important;
+  font-size: 0.65rem !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.2em !important;
   text-transform: uppercase !important;
-  letter-spacing: 0.08em !important;
-  padding: 0.65rem 1rem !important;
-  border-radius: 0 !important;
+  padding: 0.85rem 1rem !important;
+  border-radius: 1px !important;
+  transition: all 0.2s !important;
 }
-div.stButton > button:hover { background: #001f6b !important; }
+div.stButton > button:hover {
+  background: var(--gold) !important;
+  color: #0c0c0e !important;
+}
 div.stButton > button:disabled {
-  background: var(--gris-bd) !important;
-  color: var(--gris-txt) !important;
+  border-color: var(--border) !important;
+  color: var(--muted) !important;
 }
 
-/* ── BOUTON TÉLÉCHARGER ── */
 div[data-testid="stDownloadButton"] > button {
   width: 100%;
-  background: var(--vert) !important;
+  background: var(--gold) !important;
   border: none !important;
-  color: var(--blanc) !important;
-  font-family: Arial, Helvetica, sans-serif !important;
-  font-size: 0.85rem !important;
-  font-weight: bold !important;
+  color: #0c0c0e !important;
+  font-family: 'DM Mono', monospace !important;
+  font-size: 0.65rem !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.2em !important;
   text-transform: uppercase !important;
-  letter-spacing: 0.08em !important;
-  padding: 0.65rem 1rem !important;
+  padding: 0.85rem 1rem !important;
+  border-radius: 1px !important;
+  transition: background 0.2s !important;
+}
+div[data-testid="stDownloadButton"] > button:hover {
+  background: var(--gold2) !important;
+}
+
+/* ── PROGRESS ── */
+div[data-testid="stProgress"] > div {
+  background: var(--border) !important;
+  border-radius: 0 !important;
+  height: 2px !important;
+}
+div[data-testid="stProgress"] > div > div {
+  background: var(--gold) !important;
   border-radius: 0 !important;
 }
-div[data-testid="stDownloadButton"] > button:hover { background: #006130 !important; }
 
-/* ── MESSAGES ── */
-.msg-ok   { background:#e8f5e9; border-left:4px solid var(--vert); padding:0.6rem 1rem; font-size:0.8rem; color:#1b5e20; margin:0.5rem 0; }
-.msg-warn { background:#fff8e1; border-left:4px solid #f9a825;     padding:0.6rem 1rem; font-size:0.8rem; color:#5d4037; margin:0.5rem 0; }
-.msg-err  { background:#ffebee; border-left:4px solid var(--rouge); padding:0.6rem 1rem; font-size:0.8rem; color:#b71c1c; margin:0.5rem 0; }
+/* ── STATUS PILLS ── */
+.status {
+  font-size: 0.62rem;
+  letter-spacing: 0.1em;
+  padding: 0.5rem 0.8rem;
+  border-left: 2px solid;
+  margin: 0.8rem 0;
+}
+.status-ok   { border-color: var(--green); color: var(--green); background: #4caf7d0d; }
+.status-warn { border-color: var(--amber); color: var(--amber); background: #d4a8430d; }
+.status-err  { border-color: var(--red);   color: var(--red);   background: #e052520d; }
+.status-idle { border-color: var(--border); color: var(--muted); }
+
+/* ── DIVIDER ── */
+.thin-rule { border: none; border-top: 1px solid var(--border); margin: 1.5rem 0; }
 
 /* ── FOOTER ── */
 .footer {
-  border-top: 1px solid var(--gris-bd);
-  margin-top: 2.5rem;
-  padding-top: 0.8rem;
-  font-size: 0.62rem;
-  color: var(--gris-txt);
-  text-align: center;
+  margin-top: 4rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.55rem;
+  letter-spacing: 0.12em;
+  color: var(--muted);
 }
+.footer-name { color: var(--gold); opacity: 0.7; }
+
+/* ── SPINNER ── */
+div[data-testid="stSpinner"] p { color: var(--muted) !important; font-size: 0.7rem !important; }
 </style>
 """, unsafe_allow_html=True)
 
-# ─── HEADER ───────────────────────────────────────────────────────────────────
+# ── HERO ──────────────────────────────────────────────────────────────────────
 st.markdown("""
-<div class="bandeau"></div>
-<div class="header-block">
-  <div style="font-size:2.2rem;line-height:1">🇫🇷</div>
-  <div>
-    <p class="header-title">Luluflix</p>
-    <p class="header-sub">Outil d'incrustation de logo — usage interne</p>
-  </div>
+<div class="hero">
+  <h1 class="hero-title">Lulu<em>flix</em></h1>
+  <div class="hero-rule"></div>
 </div>
 """, unsafe_allow_html=True)
 
-# ─── HELPER COMMUN : INCRUSTATION LOGO ────────────────────────────────────────
+# ── HELPERS ───────────────────────────────────────────────────────────────────
 
 def composite_logo(base: Image.Image, logo_path: str) -> Image.Image:
-    """Incruste le logo sur une image PIL selon les règles métier."""
     W, H = base.size
     logo_w = int(W * 0.15)
     logo = Image.open(logo_path).convert("RGBA")
@@ -215,13 +276,11 @@ def composite_logo(base: Image.Image, logo_path: str) -> Image.Image:
     out.paste(logo, (x, y), logo)
     return out
 
-# ─── HELPERS VIDÉO ────────────────────────────────────────────────────────────
-
 def get_video_info(path: str) -> dict:
     cmd = [
         "ffprobe", "-v", "error",
         "-select_streams", "v:0",
-        "-show_entries", "stream=width,height,r_frame_rate,nb_frames",
+        "-show_entries", "stream=width,height,r_frame_rate",
         "-show_entries", "format=duration",
         "-of", "default=noprint_wrappers=1:nokey=0",
         path
@@ -243,7 +302,6 @@ def get_video_info(path: str) -> dict:
         fps = 25.0
     return {"width": w, "height": h, "duration": dur, "fps": fps}
 
-
 def make_thumbnail(video_path: str, logo_path: str, info: dict) -> Image.Image:
     frame_cmd = [
         "ffmpeg", "-y", "-i", video_path,
@@ -251,233 +309,156 @@ def make_thumbnail(video_path: str, logo_path: str, info: dict) -> Image.Image:
     ]
     result = subprocess.run(frame_cmd, capture_output=True)
     frame = Image.open(io.BytesIO(result.stdout)).convert("RGBA")
-    composited = composite_logo(frame, logo_path)
-    return composited.convert("RGB")
-
+    return composite_logo(frame, logo_path).convert("RGB")
 
 def render_video(video_path: str, logo_path: str, output_path: str, info: dict, progress_cb=None):
     W, H = info["width"], info["height"]
     logo_w = int(W * 0.15)
-    margin_x = int(W * 0.05)
-    margin_y = int(H * 0.07)
-    x = W - logo_w - margin_x
-    y = margin_y
-    scale_filter = f"scale={logo_w}:-1"
+    x = W - logo_w - int(W * 0.05)
+    y = int(H * 0.07)
     filter_complex = (
-        f"[1:v]{scale_filter}[logo];"
+        f"[1:v]scale={logo_w}:-1[logo];"
         f"[0:v][logo]overlay={x}:{y}"
     )
     cmd = [
         "ffmpeg", "-y",
-        "-i", video_path,
-        "-i", logo_path,
+        "-i", video_path, "-i", logo_path,
         "-filter_complex", filter_complex,
-        "-c:v", "libx264",
-        "-crf", "18",
-        "-preset", "fast",
-        "-c:a", "copy",
-        "-movflags", "+faststart",
+        "-c:v", "libx264", "-crf", "18", "-preset", "fast",
+        "-c:a", "copy", "-movflags", "+faststart",
         "-progress", "pipe:1",
         output_path
     ]
-    total_dur = info["duration"]
     process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
+    total = info["duration"]
     while True:
         line = process.stdout.readline()
         if not line:
             break
-        line = line.strip()
-        if line.startswith("out_time_ms="):
+        if line.strip().startswith("out_time_ms="):
             try:
-                ms = int(line.split("=")[1])
-                elapsed_s = ms / 1_000_000
-                if total_dur > 0 and progress_cb:
-                    pct = min(elapsed_s / total_dur, 1.0)
-                    progress_cb(pct)
+                ms = int(line.strip().split("=")[1])
+                if total > 0 and progress_cb:
+                    progress_cb(min(ms / 1_000_000 / total, 1.0))
             except Exception:
                 pass
     process.wait()
     if process.returncode != 0:
-        err = process.stderr.read()
-        raise RuntimeError(f"FFmpeg error:\n{err}")
+        raise RuntimeError(process.stderr.read())
 
-# ─── SESSION STATE ─────────────────────────────────────────────────────────────
-for key in ["thumbnail", "rendered_bytes"]:
-    if key not in st.session_state:
-        st.session_state[key] = None
+# ── SESSION STATE ─────────────────────────────────────────────────────────────
+for k in ["thumbnail", "rendered_bytes"]:
+    if k not in st.session_state:
+        st.session_state[k] = None
 
-# ─── ONGLETS ──────────────────────────────────────────────────────────────────
-tab_video, tab_photo = st.tabs(["📹  Vidéo", "🖼️  Photo"])
+# ── TABS ──────────────────────────────────────────────────────────────────────
+tab_v, tab_p = st.tabs(["Vidéo", "Photo"])
 
-# ══════════════════════════════════════════════════════════════════════════════
-# ONGLET VIDÉO
-# ══════════════════════════════════════════════════════════════════════════════
-with tab_video:
-
-    st.markdown('<div class="encadre"><div class="encadre-label">1 — Fichier source</div>', unsafe_allow_html=True)
-    video_file = st.file_uploader(
-        "Vidéo source",
-        type=["mp4", "mov", "avi", "mkv", "webm"],
-        label_visibility="collapsed",
-        key="vid_upload"
-    )
+# ════════════════════════════════ VIDÉO ══════════════════════════════════════
+with tab_v:
+    st.markdown('<div class="upload-wrap"><div class="upload-label">Source</div>', unsafe_allow_html=True)
+    video_file = st.file_uploader(" ", type=["mp4","mov","avi","mkv","webm"], label_visibility="collapsed", key="vu")
     st.markdown('</div>', unsafe_allow_html=True)
 
-    st.markdown('<div class="encadre"><div class="encadre-label">2 — Logo (PNG transparent)</div>', unsafe_allow_html=True)
-    logo_file_v = st.file_uploader(
-        "Logo PNG",
-        type=["png"],
-        label_visibility="collapsed",
-        key="vid_logo"
-    )
+    st.markdown('<div class="upload-wrap"><div class="upload-label">Logo — PNG</div>', unsafe_allow_html=True)
+    logo_v = st.file_uploader(" ", type=["png"], label_visibility="collapsed", key="vl")
     st.markdown('</div>', unsafe_allow_html=True)
 
-    if video_file and logo_file_v:
-        tmp_dir = tempfile.mkdtemp()
-        vid_path = os.path.join(tmp_dir, "source" + os.path.splitext(video_file.name)[1])
-        logo_path_v = os.path.join(tmp_dir, "logo.png")
+    if video_file and logo_v:
+        tmp = tempfile.mkdtemp()
+        vp = os.path.join(tmp, "src" + os.path.splitext(video_file.name)[1])
+        lp = os.path.join(tmp, "logo.png")
+        with open(vp, "wb") as f: f.write(video_file.read())
+        with open(lp, "wb") as f: f.write(logo_v.read())
 
-        with open(vid_path, "wb") as f:
-            f.write(video_file.read())
-        with open(logo_path_v, "wb") as f:
-            f.write(logo_file_v.read())
-
-        info = get_video_info(vid_path)
-        dur_str = f"{int(info['duration']//60)}:{int(info['duration']%60):02d}"
+        nfo = get_video_info(vp)
+        dur_s = f"{int(nfo['duration']//60)}:{int(nfo['duration']%60):02d}"
 
         st.markdown(f"""
-        <div class="encadre">
-          <div class="encadre-label">Informations détectées</div>
-          <div class="encadre-info">
-            Résolution : <b>{info['width']} × {info['height']} px</b><br>
-            Durée : <b>{dur_str}</b><br>
-            Fréquence : <b>{info['fps']} fps</b><br>
-            Largeur logo : <b>{int(info['width']*0.15)} px</b> (15 % de la largeur)
-          </div>
+        <div class="specs-band">
+          <div class="spec-item"><span class="spec-key">Résolution</span><span class="spec-val">{nfo['width']}×{nfo['height']}</span></div>
+          <div class="spec-item"><span class="spec-key">Durée</span><span class="spec-val">{dur_s}</span></div>
+          <div class="spec-item"><span class="spec-key">FPS</span><span class="spec-val">{nfo['fps']}</span></div>
+          <div class="spec-item"><span class="spec-key">Logo</span><span class="spec-val">{int(nfo['width']*0.15)} px</span></div>
         </div>
         """, unsafe_allow_html=True)
 
-        # Thumbnail
-        st.markdown('<div class="encadre"><div class="encadre-label">Prévisualisation (1re image)</div>', unsafe_allow_html=True)
         if st.session_state.thumbnail is None:
-            with st.spinner("Génération de la prévisualisation…"):
-                st.session_state.thumbnail = make_thumbnail(vid_path, logo_path_v, info)
+            with st.spinner(""):
+                st.session_state.thumbnail = make_thumbnail(vp, lp, nfo)
+
+        st.markdown('<div class="preview-wrap"><span class="preview-label">Aperçu</span>', unsafe_allow_html=True)
         st.image(st.session_state.thumbnail, use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
-        if st.button("Générer le rendu final", key="render_btn",
-                     disabled=(st.session_state.rendered_bytes is not None)):
-            out_path = os.path.join(tmp_dir, "video_ready_to_post.mp4")
-            prog_ph = st.empty()
-            status_ph = st.empty()
-            progress_bar = prog_ph.progress(0.0, text="")
-
-            def update_progress(pct: float):
-                progress_bar.progress(pct, text=f"Traitement… {int(pct*100)} %")
-
+        if st.button("Générer", key="vbtn", disabled=bool(st.session_state.rendered_bytes)):
+            out = os.path.join(tmp, "video_ready_to_post.mp4")
+            ph_p, ph_s = st.empty(), st.empty()
+            bar = ph_p.progress(0.0, text="")
+            ph_s.markdown('<div class="status status-warn">Traitement en cours…</div>', unsafe_allow_html=True)
             try:
-                status_ph.markdown('<div class="msg-warn">⏳ Traitement en cours, veuillez patienter…</div>', unsafe_allow_html=True)
-                render_video(vid_path, logo_path_v, out_path, info, progress_cb=update_progress)
-                progress_bar.progress(1.0, text="Terminé — 100 %")
-                status_ph.markdown('<div class="msg-ok">✔ Rendu terminé. Vous pouvez télécharger votre fichier.</div>', unsafe_allow_html=True)
-                with open(out_path, "rb") as f:
-                    st.session_state.rendered_bytes = f.read()
+                render_video(vp, lp, out, nfo, lambda p: bar.progress(p, text=f"{int(p*100)} %"))
+                bar.progress(1.0, text="100 %")
+                ph_s.markdown('<div class="status status-ok">Prêt.</div>', unsafe_allow_html=True)
+                with open(out, "rb") as f: st.session_state.rendered_bytes = f.read()
             except Exception as e:
-                status_ph.markdown(f'<div class="msg-err">✖ Erreur : {e}</div>', unsafe_allow_html=True)
-                st.stop()
+                ph_s.markdown(f'<div class="status status-err">{e}</div>', unsafe_allow_html=True)
 
         if st.session_state.rendered_bytes:
-            st.download_button(
-                label="⬇ Télécharger video_ready_to_post.mp4",
-                data=st.session_state.rendered_bytes,
-                file_name="video_ready_to_post.mp4",
-                mime="video/mp4",
-                key="dl_video"
-            )
+            st.download_button("Télécharger", data=st.session_state.rendered_bytes,
+                               file_name="video_ready_to_post.mp4", mime="video/mp4", key="vdl")
     else:
-        st.markdown('<div class="msg-warn">Veuillez déposer une vidéo et un logo pour continuer.</div>', unsafe_allow_html=True)
+        st.markdown('<div class="status status-idle">Déposez une vidéo et un logo.</div>', unsafe_allow_html=True)
 
-
-# ══════════════════════════════════════════════════════════════════════════════
-# ONGLET PHOTO
-# ══════════════════════════════════════════════════════════════════════════════
-with tab_photo:
-
-    st.markdown('<div class="encadre"><div class="encadre-label">1 — Image source</div>', unsafe_allow_html=True)
-    photo_file = st.file_uploader(
-        "Image source",
-        type=["png", "jpg", "jpeg"],
-        label_visibility="collapsed",
-        key="photo_upload"
-    )
+# ════════════════════════════════ PHOTO ══════════════════════════════════════
+with tab_p:
+    st.markdown('<div class="upload-wrap"><div class="upload-label">Source</div>', unsafe_allow_html=True)
+    photo_file = st.file_uploader(" ", type=["png","jpg","jpeg"], label_visibility="collapsed", key="pu")
     st.markdown('</div>', unsafe_allow_html=True)
 
-    st.markdown('<div class="encadre"><div class="encadre-label">2 — Logo (PNG transparent)</div>', unsafe_allow_html=True)
-    logo_file_p = st.file_uploader(
-        "Logo PNG",
-        type=["png"],
-        label_visibility="collapsed",
-        key="photo_logo"
-    )
+    st.markdown('<div class="upload-wrap"><div class="upload-label">Logo — PNG</div>', unsafe_allow_html=True)
+    logo_p = st.file_uploader(" ", type=["png"], label_visibility="collapsed", key="pl")
     st.markdown('</div>', unsafe_allow_html=True)
 
-    if photo_file and logo_file_p:
-        base_img = Image.open(photo_file)
-        W, H = base_img.size
-
-        tmp_dir_p = tempfile.mkdtemp()
-        logo_path_p = os.path.join(tmp_dir_p, "logo.png")
-        with open(logo_path_p, "wb") as f:
-            f.write(logo_file_p.read())
+    if photo_file and logo_p:
+        base = Image.open(photo_file)
+        W, H = base.size
+        tmp2 = tempfile.mkdtemp()
+        lp2 = os.path.join(tmp2, "logo.png")
+        with open(lp2, "wb") as f: f.write(logo_p.read())
 
         st.markdown(f"""
-        <div class="encadre">
-          <div class="encadre-label">Informations détectées</div>
-          <div class="encadre-info">
-            Résolution : <b>{W} × {H} px</b><br>
-            Format : <b>{(base_img.format or photo_file.name.rsplit(".", 1)[-1]).upper()}</b><br>
-            Largeur logo : <b>{int(W*0.15)} px</b> (15 % de la largeur)
-          </div>
+        <div class="specs-band">
+          <div class="spec-item"><span class="spec-key">Résolution</span><span class="spec-val">{W}×{H}</span></div>
+          <div class="spec-item"><span class="spec-key">Format</span><span class="spec-val">{(base.format or photo_file.name.rsplit('.',1)[-1]).upper()}</span></div>
+          <div class="spec-item"><span class="spec-key">Logo</span><span class="spec-val">{int(W*0.15)} px</span></div>
         </div>
         """, unsafe_allow_html=True)
 
-        # Prévisualisation instantanée
-        result_img = composite_logo(base_img, logo_path_p)
+        result = composite_logo(base, lp2)
 
-        st.markdown('<div class="encadre"><div class="encadre-label">Prévisualisation</div>', unsafe_allow_html=True)
-        st.image(result_img.convert("RGB"), use_container_width=True)
+        st.markdown('<div class="preview-wrap"><span class="preview-label">Aperçu</span>', unsafe_allow_html=True)
+        st.image(result.convert("RGB"), use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
-        # Export
-        out_buf = io.BytesIO()
+        buf = io.BytesIO()
         ext = photo_file.name.rsplit(".", 1)[-1].lower()
-        is_png = ext == "png"
-
-        if is_png:
-            result_img.save(out_buf, format="PNG", optimize=False)
-            mime = "image/png"
-            fname = "photo_ready_to_post.png"
+        if ext == "png":
+            result.save(buf, format="PNG")
+            fname, mime = "photo_ready_to_post.png", "image/png"
         else:
-            result_img.convert("RGB").save(out_buf, format="JPEG", quality=97, subsampling=0)
-            mime = "image/jpeg"
-            fname = "photo_ready_to_post.jpg"
+            result.convert("RGB").save(buf, format="JPEG", quality=97, subsampling=0)
+            fname, mime = "photo_ready_to_post.jpg", "image/jpeg"
 
-        st.markdown('<div class="msg-ok">✔ Aperçu prêt. Cliquez sur Télécharger pour récupérer votre fichier.</div>', unsafe_allow_html=True)
-
-        st.download_button(
-            label=f"⬇ Télécharger {fname}",
-            data=out_buf.getvalue(),
-            file_name=fname,
-            mime=mime,
-            key="dl_photo"
-        )
+        st.markdown('<div class="status status-ok">Prêt.</div>', unsafe_allow_html=True)
+        st.download_button("Télécharger", data=buf.getvalue(), file_name=fname, mime=mime, key="pdl")
     else:
-        st.markdown('<div class="msg-warn">Veuillez déposer une image et un logo pour continuer.</div>', unsafe_allow_html=True)
+        st.markdown('<div class="status status-idle">Déposez une image et un logo.</div>', unsafe_allow_html=True)
 
-
-# ─── FOOTER ───────────────────────────────────────────────────────────────────
+# ── FOOTER ────────────────────────────────────────────────────────────────────
 st.markdown("""
 <div class="footer">
-  Luluflix — Aucune donnée n'est conservée sur nos serveurs · Conforme RGPD
+  <span class="footer-name">Lucas Bessonnat</span>
+  <span>Aucune donnée n'est conservée sur un serveur</span>
 </div>
 """, unsafe_allow_html=True)

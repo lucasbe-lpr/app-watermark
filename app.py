@@ -6,32 +6,31 @@ from PIL import Image
 import io
 
 st.set_page_config(
-    page_title="Luluflix",
-    page_icon="◈",
+    page_title="Luluflix v1.0",
+    page_icon="🖥️",
     layout="centered",
     initial_sidebar_state="collapsed",
 )
 
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100;0,9..144,300;1,9..144,100;1,9..144,300&family=Instrument+Sans:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
 
 :root {
-  --bg-base:    #14100d;
-  --bg-mid:     #1c1612;
-  --glass:      rgba(255,248,235,0.045);
-  --glass-h:    rgba(255,248,235,0.07);
-  --border:     rgba(255,220,160,0.10);
-  --border-h:   rgba(255,220,160,0.25);
-  --amber:      #e8b96a;
-  --amber-glow: rgba(232,185,106,0.18);
-  --white:      #f5ede0;
-  --muted:      rgba(245,237,224,0.38);
-  --muted2:     rgba(245,237,224,0.18);
-  --green:      #6fcf8e;
-  --green-glow: rgba(111,207,142,0.15);
-  --red:        #e07070;
-  --warn:       #d4a843;
+  --win-bg:        #c0c0c0;
+  --win-dark:      #808080;
+  --win-darker:    #404040;
+  --win-white:     #ffffff;
+  --win-black:     #000000;
+  --win-titlebar:  #000080;
+  --win-title-txt: #ffffff;
+  --win-face:      #c0c0c0;
+  --win-highlight: #ffffff;
+  --win-shadow:    #808080;
+  --win-dshadow:   #404040;
+  --win-blue:      #0000ff;
+  --win-green:     #008000;
+  --win-red:       #ff0000;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -40,422 +39,413 @@ html, body,
 [data-testid="stAppViewContainer"],
 [data-testid="stMain"],
 .main {
-  background: var(--bg-base) !important;
-  color: var(--white) !important;
-  font-family: 'Instrument Sans', sans-serif !important;
-  font-weight: 300 !important;
+  background: var(--win-bg) !important;
+  color: var(--win-black) !important;
+  font-family: 'Share Tech Mono', 'Courier New', monospace !important;
+  font-size: 13px !important;
 }
 
 .block-container {
   background: transparent !important;
-  padding: 0 2rem 5rem !important;
-  max-width: 720px !important;
-}
-
-/* Ambient glow background */
-[data-testid="stAppViewContainer"]::before {
-  content: '';
-  position: fixed;
-  top: -20vh; left: 50%;
-  transform: translateX(-50%);
-  width: 70vw; height: 60vh;
-  background: radial-gradient(ellipse at center,
-    rgba(200,140,60,0.07) 0%,
-    rgba(180,100,40,0.04) 40%,
-    transparent 70%);
-  pointer-events: none;
-  z-index: 0;
-}
-[data-testid="stAppViewContainer"]::after {
-  content: '';
-  position: fixed;
-  bottom: -10vh; right: -10vw;
-  width: 50vw; height: 50vh;
-  background: radial-gradient(ellipse at center,
-    rgba(60,100,180,0.05) 0%,
-    transparent 65%);
-  pointer-events: none;
-  z-index: 0;
+  padding: 1rem 1.5rem 3rem !important;
+  max-width: 680px !important;
 }
 
 #MainMenu, footer, header,
 [data-testid="stToolbar"],
 [data-testid="stDecoration"] { display: none !important; }
 
-/* ── HEADER ── */
-.site-header {
-  padding: 4.5rem 0 2.5rem;
-  text-align: center;
-  position: relative;
-  z-index: 1;
+/* ── BARRE DE MENU DU HAUT ── */
+.menubar {
+  background: var(--win-face);
+  border-top: 2px solid var(--win-highlight);
+  border-left: 2px solid var(--win-highlight);
+  border-right: 2px solid var(--win-dshadow);
+  border-bottom: 2px solid var(--win-dshadow);
+  padding: 2px 4px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 8px;
+  font-size: 11px;
 }
-.header-eyebrow {
-  font-family: 'Instrument Sans', sans-serif;
-  font-size: 0.58rem;
-  font-weight: 400;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  color: var(--amber);
-  margin-bottom: 1rem;
-  opacity: 0.8;
+.menu-item {
+  padding: 2px 8px;
+  cursor: default;
 }
-.header-title {
-  font-family: 'Fraunces', serif;
-  font-weight: 100;
-  font-style: italic;
-  font-size: clamp(4.5rem, 16vw, 8.5rem);
-  line-height: 0.88;
-  color: var(--white);
-  letter-spacing: -0.02em;
-  margin: 0;
-}
-.header-title span {
-  color: var(--amber);
-  font-weight: 300;
-}
-.header-divider {
-  width: 1px;
-  height: 40px;
-  background: linear-gradient(to bottom, var(--border-h), transparent);
-  margin: 1.8rem auto 0;
+.menu-item:hover {
+  background: var(--win-titlebar);
+  color: var(--win-white);
 }
 
-/* ── GLASS CARD ── */
-.glass-card {
-  background: var(--glass);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  padding: 1.4rem 1.6rem;
-  margin-bottom: 1rem;
-  position: relative;
-  overflow: hidden;
-  transition: border-color 0.2s, background 0.2s;
+/* ── FENÊTRE PRINCIPALE ── */
+.win-window {
+  background: var(--win-face);
+  border-top: 2px solid var(--win-highlight);
+  border-left: 2px solid var(--win-highlight);
+  border-right: 2px solid var(--win-dshadow);
+  border-bottom: 2px solid var(--win-dshadow);
+  margin-bottom: 8px;
 }
-.glass-card::before {
-  content: '';
+.win-titlebar {
+  background: var(--win-titlebar);
+  color: var(--win-title-txt);
+  padding: 3px 6px 3px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: bold;
+  user-select: none;
+  font-family: 'Share Tech Mono', 'Courier New', monospace;
+}
+.titlebar-btns {
+  display: flex;
+  gap: 2px;
+}
+.tbtn {
+  width: 16px; height: 14px;
+  background: var(--win-face);
+  border-top: 1px solid var(--win-highlight);
+  border-left: 1px solid var(--win-highlight);
+  border-right: 1px solid var(--win-dshadow);
+  border-bottom: 1px solid var(--win-dshadow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  color: var(--win-black);
+  cursor: default;
+  font-family: 'Marlett', 'Share Tech Mono', monospace;
+}
+.win-body {
+  padding: 10px 12px 12px;
+}
+
+/* ── GROUPBOX / PANEL ── */
+.groupbox {
+  border-top: 1px solid var(--win-shadow);
+  border-left: 1px solid var(--win-shadow);
+  border-right: 1px solid var(--win-highlight);
+  border-bottom: 1px solid var(--win-highlight);
+  padding: 12px 10px 10px;
+  margin-bottom: 10px;
+  position: relative;
+}
+.groupbox-label {
   position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 1px;
-  background: linear-gradient(90deg,
-    transparent,
-    rgba(255,220,160,0.2) 30%,
-    rgba(255,220,160,0.2) 70%,
-    transparent);
-}
-.glass-card:hover {
-  background: var(--glass-h);
-  border-color: var(--border-h);
-}
-.card-label {
-  font-size: 0.55rem;
-  font-weight: 500;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: var(--amber);
-  margin-bottom: 0.9rem;
-  opacity: 0.9;
+  top: -8px; left: 8px;
+  background: var(--win-face);
+  padding: 0 4px;
+  font-size: 11px;
+  font-family: 'Share Tech Mono', 'Courier New', monospace;
 }
 
-/* ── TABS ── */
-div[data-testid="stTabs"] {
-  position: relative;
-  z-index: 1;
-}
-div[data-testid="stTabs"] [data-baseweb="tab-list"] {
-  background: transparent !important;
-  border-bottom: 1px solid var(--border) !important;
-  gap: 0 !important;
-  margin: 0 0 1.8rem !important;
-  padding: 0 !important;
-}
-div[data-testid="stTabs"] [data-baseweb="tab"] {
-  background: transparent !important;
-  border: none !important;
-  border-bottom: 1px solid transparent !important;
-  margin-bottom: -1px !important;
-  color: var(--muted) !important;
-  font-family: 'Instrument Sans', sans-serif !important;
-  font-size: 0.65rem !important;
-  font-weight: 400 !important;
-  letter-spacing: 0.22em !important;
-  text-transform: uppercase !important;
-  padding: 0.65rem 2rem 0.65rem 0 !important;
-  transition: color 0.2s !important;
-}
-div[data-testid="stTabs"] [aria-selected="true"] {
-  color: var(--amber) !important;
-  border-bottom: 1px solid var(--amber) !important;
-}
-div[data-testid="stTabs"] [data-baseweb="tab"]:hover {
-  color: var(--white) !important;
-}
-/* Supprime TOUT indicateur rouge/bleu injecté par Streamlit */
-div[data-testid="stTabs"] [data-baseweb="tab-highlight"],
-div[data-testid="stTabs"] [data-baseweb="tab-border"] {
-  background: transparent !important;
-  background-color: transparent !important;
-  display: none !important;
+/* ── INSET / SUNKEN ── */
+.inset {
+  border-top: 1px solid var(--win-shadow);
+  border-left: 1px solid var(--win-shadow);
+  border-right: 1px solid var(--win-highlight);
+  border-bottom: 1px solid var(--win-highlight);
+  background: var(--win-white);
+  padding: 6px 8px;
+  margin-bottom: 6px;
+  font-size: 12px;
+  font-family: 'Share Tech Mono', 'Courier New', monospace;
 }
 
-/* ── UPLOADER ── */
+/* ── UPLOAD ── */
 [data-testid="stFileUploader"] {
   background: transparent !important;
 }
 [data-testid="stFileUploader"] section {
-  background: rgba(255,248,235,0.025) !important;
-  border: 1px dashed var(--border-h) !important;
-  border-radius: 8px !important;
-  padding: 1.6rem 1.4rem !important;
-  transition: all 0.2s !important;
+  background: var(--win-white) !important;
+  border-top: 1px solid var(--win-shadow) !important;
+  border-left: 1px solid var(--win-shadow) !important;
+  border-right: 1px solid var(--win-highlight) !important;
+  border-bottom: 1px solid var(--win-highlight) !important;
+  border-radius: 0 !important;
+  padding: 14px 10px !important;
 }
 [data-testid="stFileUploader"] section:hover,
 [data-testid="stFileUploader"] section:focus-within {
-  background: rgba(232,185,106,0.05) !important;
-  border-color: var(--amber) !important;
-  box-shadow: 0 0 0 3px var(--amber-glow) !important;
+  outline: 1px dotted var(--win-black) !important;
+  outline-offset: 2px !important;
 }
 [data-testid="stFileUploaderDropzoneInstructions"] * {
-  color: var(--muted) !important;
-  font-family: 'Instrument Sans', sans-serif !important;
-  font-size: 0.8rem !important;
-  font-weight: 300 !important;
+  color: var(--win-black) !important;
+  font-family: 'Share Tech Mono', 'Courier New', monospace !important;
+  font-size: 12px !important;
 }
-[data-testid="stFileUploaderDropzoneInstructions"] span {
-  color: var(--white) !important;
-  font-weight: 400 !important;
+[data-testid="stFileUploaderDropzoneInstructions"] small {
+  color: var(--win-darker) !important;
+  font-size: 10px !important;
 }
+/* Bouton Browse — style Win95 */
 [data-testid="stFileUploader"] button,
 [data-testid="stBaseButton-secondary"] {
-  background: transparent !important;
-  border: 1px solid var(--border-h) !important;
-  color: var(--white) !important;
-  font-family: 'Instrument Sans', sans-serif !important;
-  font-size: 0.68rem !important;
-  font-weight: 400 !important;
-  letter-spacing: 0.08em !important;
-  padding: 0.35rem 1rem !important;
-  border-radius: 4px !important;
-  transition: all 0.15s !important;
+  background: var(--win-face) !important;
+  border-top: 2px solid var(--win-highlight) !important;
+  border-left: 2px solid var(--win-highlight) !important;
+  border-right: 2px solid var(--win-dshadow) !important;
+  border-bottom: 2px solid var(--win-dshadow) !important;
+  color: var(--win-black) !important;
+  font-family: 'Share Tech Mono', 'Courier New', monospace !important;
+  font-size: 11px !important;
+  padding: 3px 12px !important;
+  border-radius: 0 !important;
+  cursor: default !important;
+  min-width: 75px !important;
+  text-align: center !important;
 }
 [data-testid="stFileUploader"] button:hover {
-  background: var(--amber-glow) !important;
-  border-color: var(--amber) !important;
-  color: var(--amber) !important;
+  background: var(--win-face) !important;
+}
+[data-testid="stFileUploader"] button:active {
+  border-top: 2px solid var(--win-dshadow) !important;
+  border-left: 2px solid var(--win-dshadow) !important;
+  border-right: 2px solid var(--win-highlight) !important;
+  border-bottom: 2px solid var(--win-highlight) !important;
 }
 [data-testid="stFileUploaderFileName"] {
-  color: var(--amber) !important;
-  font-size: 0.75rem !important;
-  font-weight: 400 !important;
+  color: var(--win-black) !important;
+  font-size: 11px !important;
+  font-family: 'Share Tech Mono', 'Courier New', monospace !important;
+}
+
+/* ── TABS ── */
+div[data-testid="stTabs"] [data-baseweb="tab-list"] {
+  background: transparent !important;
+  border-bottom: 2px solid var(--win-shadow) !important;
+  gap: 0 !important;
+  margin-bottom: 10px !important;
+  padding: 0 !important;
+}
+div[data-testid="stTabs"] [data-baseweb="tab"] {
+  background: var(--win-face) !important;
+  border-top: 2px solid var(--win-highlight) !important;
+  border-left: 2px solid var(--win-highlight) !important;
+  border-right: 2px solid var(--win-shadow) !important;
+  border-bottom: none !important;
+  color: var(--win-black) !important;
+  font-family: 'Share Tech Mono', 'Courier New', monospace !important;
+  font-size: 12px !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  padding: 4px 16px !important;
+  margin-right: 3px !important;
+  margin-bottom: -2px !important;
+  border-radius: 0 !important;
+}
+div[data-testid="stTabs"] [aria-selected="true"] {
+  background: var(--win-face) !important;
+  color: var(--win-black) !important;
+  border-bottom: 2px solid var(--win-face) !important;
+  padding-top: 6px !important;
+  font-weight: bold !important;
+}
+div[data-testid="stTabs"] [data-baseweb="tab-highlight"],
+div[data-testid="stTabs"] [data-baseweb="tab-border"] {
+  display: none !important;
+  background: transparent !important;
 }
 
 /* ── SPECS ── */
-.specs-band {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1px;
-  background: var(--border);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  overflow: hidden;
-  margin: 1.4rem 0;
+.specs-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+  margin-bottom: 10px;
+  font-family: 'Share Tech Mono', 'Courier New', monospace;
 }
-.spec-item {
-  background: var(--bg-mid);
-  padding: 0.9rem 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
+.specs-table td {
+  padding: 2px 8px;
+  border: 1px solid var(--win-shadow);
 }
-.spec-key {
-  font-size: 0.48rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--muted);
-  font-weight: 400;
+.specs-table td:first-child {
+  background: var(--win-face);
+  color: var(--win-darker);
+  width: 38%;
 }
-.spec-val {
-  font-family: 'Fraunces', serif;
-  font-weight: 100;
-  font-size: 1.25rem;
-  color: var(--white);
-  line-height: 1;
+.specs-table td:last-child {
+  background: var(--win-white);
+  font-weight: bold;
 }
 
 /* ── PREVIEW ── */
-.preview-shell {
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  overflow: hidden;
-  margin-bottom: 1.4rem;
+.preview-inset {
+  border-top: 1px solid var(--win-shadow);
+  border-left: 1px solid var(--win-shadow);
+  border-right: 1px solid var(--win-highlight);
+  border-bottom: 1px solid var(--win-highlight);
   background: #000;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  margin-bottom: 10px;
+  overflow: hidden;
 }
-.preview-topbar {
-  display: flex;
-  align-items: center;
-  gap: 0.45rem;
-  padding: 0.5rem 0.9rem;
-  background: rgba(255,248,235,0.04);
-  border-bottom: 1px solid var(--border);
-}
-.pdot { width: 7px; height: 7px; border-radius: 50%; }
-.pdot-r { background: rgba(255,255,255,0.12); }
-.pdot-y { background: rgba(255,255,255,0.12); }
-.pdot-g { background: var(--amber); opacity: 0.7; }
-.preview-filename {
-  font-size: 0.5rem;
-  letter-spacing: 0.14em;
-  color: var(--muted2);
-  margin-left: 0.4rem;
-  font-weight: 400;
+.preview-caption {
+  background: var(--win-titlebar);
+  color: var(--win-white);
+  font-size: 10px;
+  padding: 1px 6px;
+  font-family: 'Share Tech Mono', 'Courier New', monospace;
 }
 
 /* ── BUTTONS ── */
 div.stButton > button {
-  width: 100% !important;
-  background: var(--glass) !important;
-  border: 1px solid var(--border-h) !important;
-  color: var(--white) !important;
-  font-family: 'Instrument Sans', sans-serif !important;
-  font-size: 0.72rem !important;
-  font-weight: 400 !important;
-  letter-spacing: 0.18em !important;
-  text-transform: uppercase !important;
-  padding: 0.85rem 1rem !important;
-  border-radius: 8px !important;
-  transition: all 0.2s !important;
-  backdrop-filter: blur(8px) !important;
+  background: var(--win-face) !important;
+  border-top: 2px solid var(--win-highlight) !important;
+  border-left: 2px solid var(--win-highlight) !important;
+  border-right: 2px solid var(--win-dshadow) !important;
+  border-bottom: 2px solid var(--win-dshadow) !important;
+  color: var(--win-black) !important;
+  font-family: 'Share Tech Mono', 'Courier New', monospace !important;
+  font-size: 12px !important;
+  font-weight: bold !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  padding: 4px 20px !important;
+  border-radius: 0 !important;
+  min-width: 120px !important;
+  cursor: default !important;
+  width: auto !important;
+  display: block !important;
+  margin: 0 auto !important;
+  transition: none !important;
 }
 div.stButton > button:hover {
-  background: var(--amber-glow) !important;
-  border-color: var(--amber) !important;
-  color: var(--amber) !important;
-  box-shadow: 0 0 20px var(--amber-glow) !important;
+  background: var(--win-face) !important;
+}
+div.stButton > button:active,
+div.stButton > button:focus {
+  border-top: 2px solid var(--win-dshadow) !important;
+  border-left: 2px solid var(--win-dshadow) !important;
+  border-right: 2px solid var(--win-highlight) !important;
+  border-bottom: 2px solid var(--win-highlight) !important;
+  outline: 1px dotted var(--win-black) !important;
+  outline-offset: -4px !important;
 }
 div.stButton > button:disabled {
-  opacity: 0.3 !important;
-  cursor: not-allowed !important;
+  color: var(--win-shadow) !important;
+  text-shadow: 1px 1px 0 var(--win-white) !important;
 }
 
 div[data-testid="stDownloadButton"] > button {
-  width: 100% !important;
-  background: var(--green-glow) !important;
-  border: 1px solid rgba(111,207,142,0.35) !important;
-  color: var(--green) !important;
-  font-family: 'Instrument Sans', sans-serif !important;
-  font-size: 0.72rem !important;
-  font-weight: 400 !important;
-  letter-spacing: 0.18em !important;
-  text-transform: uppercase !important;
-  padding: 0.85rem 1rem !important;
-  border-radius: 8px !important;
-  transition: all 0.2s !important;
-}
-div[data-testid="stDownloadButton"] > button:hover {
-  background: rgba(111,207,142,0.22) !important;
-  box-shadow: 0 0 20px var(--green-glow) !important;
+  background: var(--win-face) !important;
+  border-top: 2px solid var(--win-highlight) !important;
+  border-left: 2px solid var(--win-highlight) !important;
+  border-right: 2px solid var(--win-dshadow) !important;
+  border-bottom: 2px solid var(--win-dshadow) !important;
+  color: var(--win-black) !important;
+  font-family: 'Share Tech Mono', 'Courier New', monospace !important;
+  font-size: 12px !important;
+  font-weight: bold !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  padding: 4px 20px !important;
+  border-radius: 0 !important;
+  width: auto !important;
+  display: block !important;
+  margin: 0 auto !important;
 }
 
 /* ── PROGRESS ── */
 div[data-testid="stProgress"] > div {
-  background: var(--border) !important;
-  border-radius: 99px !important;
-  height: 3px !important;
+  background: var(--win-white) !important;
+  border-top: 1px solid var(--win-shadow) !important;
+  border-left: 1px solid var(--win-shadow) !important;
+  border-right: 1px solid var(--win-highlight) !important;
+  border-bottom: 1px solid var(--win-highlight) !important;
+  border-radius: 0 !important;
+  height: 16px !important;
 }
 div[data-testid="stProgress"] > div > div {
-  background: linear-gradient(90deg, var(--amber), var(--green)) !important;
-  border-radius: 99px !important;
+  background: var(--win-titlebar) !important;
+  border-radius: 0 !important;
+  height: 100% !important;
 }
 div[data-testid="stProgress"] p {
-  font-size: 0.6rem !important;
-  color: var(--muted) !important;
-  letter-spacing: 0.1em !important;
-  font-family: 'Instrument Sans', sans-serif !important;
+  font-family: 'Share Tech Mono', 'Courier New', monospace !important;
+  font-size: 10px !important;
+  color: var(--win-darker) !important;
 }
 
 /* ── STATUS ── */
-.status {
-  font-size: 0.65rem;
-  font-weight: 300;
-  letter-spacing: 0.06em;
-  padding: 0.65rem 1rem;
-  border-radius: 6px;
-  border: 1px solid;
-  margin: 0.8rem 0;
-  font-family: 'Instrument Sans', sans-serif;
+.status-bar {
+  background: var(--win-face);
+  border-top: 1px solid var(--win-shadow);
+  padding: 2px 6px;
+  font-size: 11px;
+  font-family: 'Share Tech Mono', 'Courier New', monospace;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
-.status-ok   {
-  border-color: rgba(111,207,142,0.3);
-  color: var(--green);
-  background: var(--green-glow);
+.status-panel {
+  border-top: 1px solid var(--win-shadow);
+  border-left: 1px solid var(--win-shadow);
+  border-right: 1px solid var(--win-highlight);
+  border-bottom: 1px solid var(--win-highlight);
+  padding: 1px 8px;
+  font-size: 11px;
+  font-family: 'Share Tech Mono', 'Courier New', monospace;
+  flex: 1;
 }
-.status-warn {
-  border-color: rgba(212,168,67,0.3);
-  color: var(--warn);
-  background: rgba(212,168,67,0.07);
-}
-.status-err  {
-  border-color: rgba(224,112,112,0.3);
-  color: var(--red);
-  background: rgba(224,112,112,0.07);
-}
-.status-idle {
-  border-color: var(--border);
-  color: var(--muted);
-  background: transparent;
-}
+.msg-ok   { color: var(--win-green); }
+.msg-warn { color: var(--win-darker); }
+.msg-err  { color: var(--win-red); font-weight: bold; }
+.msg-idle { color: var(--win-shadow); }
 
-/* ── FOOTER ── */
-.footer {
-  margin-top: 5rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--border);
+/* ── FOOTER / STATUSBAR ── */
+.app-statusbar {
+  background: var(--win-face);
+  border-top: 2px solid var(--win-shadow);
+  padding: 3px 8px;
   display: flex;
   justify-content: space-between;
-  align-items: baseline;
+  font-size: 10px;
+  font-family: 'Share Tech Mono', 'Courier New', monospace;
+  color: var(--win-darker);
+  margin-top: 16px;
 }
-.footer-name {
-  font-family: 'Fraunces', serif;
-  font-weight: 100;
-  font-style: italic;
-  font-size: 1rem;
-  color: var(--amber);
-  opacity: 0.8;
-}
-.footer-legal {
-  font-size: 0.52rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--muted2);
+.statusbar-cell {
+  border-top: 1px solid var(--win-shadow);
+  border-left: 1px solid var(--win-shadow);
+  border-right: 1px solid var(--win-highlight);
+  border-bottom: 1px solid var(--win-highlight);
+  padding: 1px 10px;
 }
 
 /* Spinner */
 div[data-testid="stSpinner"] p {
-  color: var(--muted) !important;
-  font-size: 0.65rem !important;
-  letter-spacing: 0.08em !important;
-}
-
-/* Ensure all content above pseudo-elements */
-div[data-testid="stTabs"],
-.glass-card, [data-testid="stFileUploader"],
-div.stButton, div[data-testid="stDownloadButton"],
-.specs-band, .preview-shell, .status, .footer {
-  position: relative;
-  z-index: 1;
+  font-family: 'Share Tech Mono', 'Courier New', monospace !important;
+  font-size: 11px !important;
+  color: var(--win-darker) !important;
 }
 </style>
 """, unsafe_allow_html=True)
 
-# ── HEADER ─────────────────────────────────────────────────────────────────────
+# ── BARRE DE MENU ──────────────────────────────────────────────────────────────
 st.markdown("""
-<div class="site-header">
-  <p class="header-eyebrow">Watermark Engine</p>
-  <h1 class="header-title">Lulu<span>flix</span></h1>
-  <div class="header-divider"></div>
+<div class="menubar">
+  <span class="menu-item">Fichier</span>
+  <span class="menu-item">Edition</span>
+  <span class="menu-item">Affichage</span>
+  <span class="menu-item">Aide</span>
 </div>
+""", unsafe_allow_html=True)
+
+# ── FENÊTRE PRINCIPALE ─────────────────────────────────────────────────────────
+st.markdown("""
+<div class="win-window">
+  <div class="win-titlebar">
+    <span>🖥️ Luluflix v1.0 — Watermark Tool</span>
+    <div class="titlebar-btns">
+      <div class="tbtn">_</div>
+      <div class="tbtn">□</div>
+      <div class="tbtn">✕</div>
+    </div>
+  </div>
+  <div class="win-body" style="padding-bottom:4px;">
 """, unsafe_allow_html=True)
 
 # ── HELPERS ────────────────────────────────────────────────────────────────────
@@ -541,22 +531,28 @@ for k in ["thumbnail", "rendered_bytes"]:
         st.session_state[k] = None
 
 # ── TABS ────────────────────────────────────────────────────────────────────────
-tab_v, tab_p = st.tabs(["Vidéo", "Photo"])
+tab_v, tab_p = st.tabs(["📹 Vidéo", "🖼 Photo"])
 
 # ═══════════════════════════════ VIDÉO ════════════════════════════════════════
 with tab_v:
 
-    st.markdown('<div class="glass-card"><p class="card-label">Source</p>', unsafe_allow_html=True)
+    st.markdown("""
+    <div class="groupbox">
+      <span class="groupbox-label">Fichier source</span>
+    """, unsafe_allow_html=True)
     video_file = st.file_uploader(
-        "Déposez votre vidéo ici",
+        "Déposer la vidéo ici ou cliquer sur Parcourir",
         type=["mp4", "mov", "avi", "mkv", "webm"],
         key="vu"
     )
     st.markdown('</div>', unsafe_allow_html=True)
 
-    st.markdown('<div class="glass-card"><p class="card-label">Logo — PNG transparent</p>', unsafe_allow_html=True)
+    st.markdown("""
+    <div class="groupbox">
+      <span class="groupbox-label">Logo (PNG transparent)</span>
+    """, unsafe_allow_html=True)
     logo_v = st.file_uploader(
-        "Déposez votre logo ici",
+        "Déposer le logo ici ou cliquer sur Parcourir",
         type=["png"],
         key="vl"
     )
@@ -573,63 +569,51 @@ with tab_v:
         dur_s = f"{int(nfo['duration']//60)}:{int(nfo['duration']%60):02d}"
 
         st.markdown(f"""
-        <div class="specs-band">
-          <div class="spec-item">
-            <span class="spec-key">Largeur</span>
-            <span class="spec-val">{nfo['width']}</span>
-          </div>
-          <div class="spec-item">
-            <span class="spec-key">Hauteur</span>
-            <span class="spec-val">{nfo['height']}</span>
-          </div>
-          <div class="spec-item">
-            <span class="spec-key">Durée</span>
-            <span class="spec-val">{dur_s}</span>
-          </div>
-          <div class="spec-item">
-            <span class="spec-key">FPS</span>
-            <span class="spec-val">{nfo['fps']}</span>
-          </div>
+        <div class="groupbox">
+          <span class="groupbox-label">Propriétés</span>
+          <table class="specs-table">
+            <tr><td>Résolution :</td><td>{nfo['width']} x {nfo['height']} px</td></tr>
+            <tr><td>Durée :</td><td>{dur_s}</td></tr>
+            <tr><td>Fréquence :</td><td>{nfo['fps']} fps</td></tr>
+            <tr><td>Largeur logo :</td><td>{int(nfo['width']*0.15)} px (15%)</td></tr>
+          </table>
         </div>
         """, unsafe_allow_html=True)
 
         if st.session_state.thumbnail is None:
-            with st.spinner("Génération de l'aperçu…"):
+            with st.spinner("Calcul de l'aperçu en cours..."):
                 st.session_state.thumbnail = make_thumbnail(vp, lp, nfo)
 
         st.markdown("""
-        <div class="preview-shell">
-          <div class="preview-topbar">
-            <div class="pdot pdot-r"></div>
-            <div class="pdot pdot-y"></div>
-            <div class="pdot pdot-g"></div>
-            <span class="preview-filename">aperçu — image 0</span>
-          </div>
-        </div>
+        <div class="groupbox">
+          <span class="groupbox-label">Aperçu</span>
+          <div class="preview-inset">
+            <div class="preview-caption">Aperçu.bmp — première image avec logo</div>
         """, unsafe_allow_html=True)
         st.image(st.session_state.thumbnail, use_container_width=True)
+        st.markdown('</div></div>', unsafe_allow_html=True)
 
         st.markdown("<br>", unsafe_allow_html=True)
 
-        if st.button("Générer le rendu", key="vbtn",
+        if st.button("OK  Générer le rendu", key="vbtn",
                      disabled=bool(st.session_state.rendered_bytes)):
             out = os.path.join(tmp, "video_ready_to_post.mp4")
             ph_p, ph_s = st.empty(), st.empty()
             bar = ph_p.progress(0.0, text="")
-            ph_s.markdown('<div class="status status-warn">Traitement en cours…</div>', unsafe_allow_html=True)
+            ph_s.markdown('<div class="status-bar"><div class="status-panel msg-warn">⧖ Encodage en cours, veuillez patienter...</div></div>', unsafe_allow_html=True)
             try:
                 render_video(vp, lp, out, nfo,
-                             lambda p: bar.progress(p, text=f"{int(p*100)} %"))
-                bar.progress(1.0, text="100 %")
-                ph_s.markdown('<div class="status status-ok">Rendu terminé — fichier prêt.</div>', unsafe_allow_html=True)
+                             lambda p: bar.progress(p, text=f"Encodage : {int(p*100)}%"))
+                bar.progress(1.0, text="Terminé : 100%")
+                ph_s.markdown('<div class="status-bar"><div class="status-panel msg-ok">✓ Encodage terminé. Fichier prêt au téléchargement.</div></div>', unsafe_allow_html=True)
                 with open(out, "rb") as f:
                     st.session_state.rendered_bytes = f.read()
             except Exception as e:
-                ph_s.markdown(f'<div class="status status-err">{e}</div>', unsafe_allow_html=True)
+                ph_s.markdown(f'<div class="status-bar"><div class="status-panel msg-err">ERREUR : {e}</div></div>', unsafe_allow_html=True)
 
         if st.session_state.rendered_bytes:
             st.download_button(
-                "↓ Télécharger la vidéo",
+                "💾  Enregistrer sous...",
                 data=st.session_state.rendered_bytes,
                 file_name="video_ready_to_post.mp4",
                 mime="video/mp4",
@@ -637,23 +621,28 @@ with tab_v:
             )
 
     else:
-        st.markdown('<div class="status status-idle">Déposez une vidéo et un logo pour commencer.</div>', unsafe_allow_html=True)
-
+        st.markdown('<div class="status-bar"><div class="status-panel msg-idle">En attente — sélectionner une vidéo et un logo.</div></div>', unsafe_allow_html=True)
 
 # ═══════════════════════════════ PHOTO ════════════════════════════════════════
 with tab_p:
 
-    st.markdown('<div class="glass-card"><p class="card-label">Source</p>', unsafe_allow_html=True)
+    st.markdown("""
+    <div class="groupbox">
+      <span class="groupbox-label">Fichier source</span>
+    """, unsafe_allow_html=True)
     photo_file = st.file_uploader(
-        "Déposez votre image ici",
+        "Déposer l'image ici ou cliquer sur Parcourir",
         type=["png", "jpg", "jpeg"],
         key="pu"
     )
     st.markdown('</div>', unsafe_allow_html=True)
 
-    st.markdown('<div class="glass-card"><p class="card-label">Logo — PNG transparent</p>', unsafe_allow_html=True)
+    st.markdown("""
+    <div class="groupbox">
+      <span class="groupbox-label">Logo (PNG transparent)</span>
+    """, unsafe_allow_html=True)
     logo_p = st.file_uploader(
-        "Déposez votre logo ici",
+        "Déposer le logo ici ou cliquer sur Parcourir",
         type=["png"],
         key="pl"
     )
@@ -668,39 +657,28 @@ with tab_p:
 
         fmt = (base.format or photo_file.name.rsplit(".", 1)[-1]).upper()
         st.markdown(f"""
-        <div class="specs-band">
-          <div class="spec-item">
-            <span class="spec-key">Largeur</span>
-            <span class="spec-val">{W}</span>
-          </div>
-          <div class="spec-item">
-            <span class="spec-key">Hauteur</span>
-            <span class="spec-val">{H}</span>
-          </div>
-          <div class="spec-item">
-            <span class="spec-key">Format</span>
-            <span class="spec-val">{fmt}</span>
-          </div>
-          <div class="spec-item">
-            <span class="spec-key">Logo</span>
-            <span class="spec-val">{int(W*0.15)}px</span>
-          </div>
+        <div class="groupbox">
+          <span class="groupbox-label">Propriétés</span>
+          <table class="specs-table">
+            <tr><td>Résolution :</td><td>{W} x {H} px</td></tr>
+            <tr><td>Format :</td><td>{fmt}</td></tr>
+            <tr><td>Largeur logo :</td><td>{int(W*0.15)} px (15%)</td></tr>
+          </table>
         </div>
         """, unsafe_allow_html=True)
 
         result_img = composite_logo(base, lp2)
 
         st.markdown("""
-        <div class="preview-shell">
-          <div class="preview-topbar">
-            <div class="pdot pdot-r"></div>
-            <div class="pdot pdot-y"></div>
-            <div class="pdot pdot-g"></div>
-            <span class="preview-filename">aperçu — output</span>
-          </div>
-        </div>
+        <div class="groupbox">
+          <span class="groupbox-label">Aperçu</span>
+          <div class="preview-inset">
+            <div class="preview-caption">Aperçu.bmp — image avec logo</div>
         """, unsafe_allow_html=True)
         st.image(result_img.convert("RGB"), use_container_width=True)
+        st.markdown('</div></div>', unsafe_allow_html=True)
+
+        st.markdown("<br>", unsafe_allow_html=True)
 
         buf = io.BytesIO()
         ext = photo_file.name.rsplit(".", 1)[-1].lower()
@@ -711,23 +689,26 @@ with tab_p:
             result_img.convert("RGB").save(buf, format="JPEG", quality=97, subsampling=0)
             fname, mime = "photo_ready_to_post.jpg", "image/jpeg"
 
-        st.markdown('<div class="status status-ok">Prêt.</div>', unsafe_allow_html=True)
+        st.markdown('<div class="status-bar"><div class="status-panel msg-ok">✓ Traitement terminé. Prêt à enregistrer.</div></div>', unsafe_allow_html=True)
+        st.markdown("<br>", unsafe_allow_html=True)
         st.download_button(
-            "↓ Télécharger la photo",
+            "💾  Enregistrer sous...",
             data=buf.getvalue(),
             file_name=fname,
             mime=mime,
             key="pdl"
         )
-
     else:
-        st.markdown('<div class="status status-idle">Déposez une image et un logo pour commencer.</div>', unsafe_allow_html=True)
+        st.markdown('<div class="status-bar"><div class="status-panel msg-idle">En attente — sélectionner une image et un logo.</div></div>', unsafe_allow_html=True)
 
+# ── FERMETURE FENÊTRE ──────────────────────────────────────────────────────────
+st.markdown('</div></div>', unsafe_allow_html=True)
 
-# ── FOOTER ─────────────────────────────────────────────────────────────────────
+# ── BARRE DE STATUT BAS ────────────────────────────────────────────────────────
 st.markdown("""
-<div class="footer">
-  <span class="footer-name">Lucas Bessonnat</span>
-  <span class="footer-legal">Aucune donnée n'est conservée sur un serveur</span>
+<div class="app-statusbar">
+  <div class="statusbar-cell">Lucas Bessonnat</div>
+  <div class="statusbar-cell">Aucune donnée n'est conservée sur un serveur</div>
+  <div class="statusbar-cell">Luluflix v1.0</div>
 </div>
 """, unsafe_allow_html=True)

@@ -7,496 +7,465 @@ import io
 
 st.set_page_config(
     page_title="Luluflix",
-    page_icon="▶",
+    page_icon="◈",
     layout="centered",
     initial_sidebar_state="collapsed",
 )
 
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Azeret+Mono:wght@300;400;500;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100;0,9..144,300;1,9..144,100;1,9..144,300&family=Instrument+Sans:wght@300;400;500&display=swap');
 
 :root {
-  --bg:        #0a0a0f;
-  --bg2:       #0f0f17;
-  --green:     #00ff41;
-  --green-dim: #007a1f;
-  --red:       #ff2d55;
-  --white:     #e8e8f0;
-  --muted:     #3a3a4a;
-  --border:    #1a1a2e;
-  --amber:     #ffbe0b;
-  --cyan:      #00d9f5;
+  --bg-base:    #14100d;
+  --bg-mid:     #1c1612;
+  --glass:      rgba(255,248,235,0.045);
+  --glass-h:    rgba(255,248,235,0.07);
+  --border:     rgba(255,220,160,0.10);
+  --border-h:   rgba(255,220,160,0.25);
+  --amber:      #e8b96a;
+  --amber-glow: rgba(232,185,106,0.18);
+  --white:      #f5ede0;
+  --muted:      rgba(245,237,224,0.38);
+  --muted2:     rgba(245,237,224,0.18);
+  --green:      #6fcf8e;
+  --green-glow: rgba(111,207,142,0.15);
+  --red:        #e07070;
+  --warn:       #d4a843;
 }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+*, *::before, *::after { box-sizing: border-box; }
 
 html, body,
 [data-testid="stAppViewContainer"],
 [data-testid="stMain"],
 .main {
-  background: var(--bg) !important;
+  background: var(--bg-base) !important;
   color: var(--white) !important;
-  font-family: 'Azeret Mono', monospace !important;
+  font-family: 'Instrument Sans', sans-serif !important;
+  font-weight: 300 !important;
 }
 
 .block-container {
-  background: var(--bg) !important;
+  background: transparent !important;
   padding: 0 2rem 5rem !important;
-  max-width: 760px !important;
+  max-width: 720px !important;
 }
 
-/* SCANLINES */
-[data-testid="stAppViewContainer"]::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent 0px,
-    transparent 3px,
-    rgba(0,0,0,0.18) 3px,
-    rgba(0,0,0,0.18) 4px
-  );
-  pointer-events: none;
-  z-index: 9999;
-}
-
-/* NOISE GRAIN */
+/* Ambient glow background */
 [data-testid="stAppViewContainer"]::before {
   content: '';
   position: fixed;
-  inset: -200%;
-  width: 400%;
-  height: 400%;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-  opacity: 0.4;
+  top: -20vh; left: 50%;
+  transform: translateX(-50%);
+  width: 70vw; height: 60vh;
+  background: radial-gradient(ellipse at center,
+    rgba(200,140,60,0.07) 0%,
+    rgba(180,100,40,0.04) 40%,
+    transparent 70%);
   pointer-events: none;
-  z-index: 9998;
-  animation: grain 0.5s steps(2) infinite;
+  z-index: 0;
 }
-@keyframes grain {
-  0%,100% { transform: translate(0,0); }
-  25%      { transform: translate(-1%,-2%); }
-  50%      { transform: translate(1%,1%); }
-  75%      { transform: translate(-2%,1%); }
+[data-testid="stAppViewContainer"]::after {
+  content: '';
+  position: fixed;
+  bottom: -10vh; right: -10vw;
+  width: 50vw; height: 50vh;
+  background: radial-gradient(ellipse at center,
+    rgba(60,100,180,0.05) 0%,
+    transparent 65%);
+  pointer-events: none;
+  z-index: 0;
 }
 
 #MainMenu, footer, header,
 [data-testid="stToolbar"],
 [data-testid="stDecoration"] { display: none !important; }
 
-/* ══════════════════════════════
-   HEADER
-══════════════════════════════ */
+/* ── HEADER ── */
 .site-header {
-  position: relative;
-  padding: 4rem 0 0;
-  margin-bottom: 0;
-  overflow: hidden;
-}
-.site-header-bg {
-  position: absolute;
-  top: 0; left: -2rem; right: -2rem;
-  height: 100%;
-  background: linear-gradient(180deg, #0f0f1f 0%, transparent 100%);
-  z-index: 0;
-}
-
-.title-row {
+  padding: 4.5rem 0 2.5rem;
+  text-align: center;
   position: relative;
   z-index: 1;
-  display: flex;
-  align-items: flex-end;
-  gap: 0;
 }
-.title-main {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: clamp(6rem, 22vw, 11rem);
-  line-height: 0.85;
-  color: var(--white);
-  letter-spacing: 0.01em;
-  animation: flicker 8s infinite;
-}
-@keyframes flicker {
-  0%,95%,97%,100% { opacity: 1; }
-  96%             { opacity: 0.6; }
-  96.5%           { opacity: 0.95; }
-}
-.title-accent {
-  color: var(--green);
-  text-shadow: 0 0 30px #00ff4177, 0 0 80px #00ff4133;
-}
-
-.header-meta {
-  position: relative;
-  z-index: 1;
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  margin-top: 0.6rem;
-  padding-bottom: 1.5rem;
-  border-bottom: 1px solid var(--muted);
-}
-.header-badge {
-  font-size: 0.55rem;
-  letter-spacing: 0.2em;
+.header-eyebrow {
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 0.58rem;
+  font-weight: 400;
+  letter-spacing: 0.3em;
   text-transform: uppercase;
-  color: var(--bg);
-  background: var(--green);
-  padding: 0.2rem 0.5rem;
-  font-weight: 700;
-  font-family: 'Azeret Mono', monospace;
+  color: var(--amber);
+  margin-bottom: 1rem;
+  opacity: 0.8;
 }
-.header-status {
-  font-size: 0.6rem;
-  letter-spacing: 0.15em;
-  color: var(--muted);
+.header-title {
+  font-family: 'Fraunces', serif;
+  font-weight: 100;
+  font-style: italic;
+  font-size: clamp(4.5rem, 16vw, 8.5rem);
+  line-height: 0.88;
+  color: var(--white);
+  letter-spacing: -0.02em;
+  margin: 0;
 }
-.blink {
-  animation: blink 1.1s step-end infinite;
-  color: var(--green);
+.header-title span {
+  color: var(--amber);
+  font-weight: 300;
 }
-@keyframes blink { 50% { opacity: 0; } }
+.header-divider {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, var(--border-h), transparent);
+  margin: 1.8rem auto 0;
+}
 
-/* ══════════════════════════════
-   TABS
-══════════════════════════════ */
+/* ── GLASS CARD ── */
+.glass-card {
+  background: var(--glass);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  padding: 1.4rem 1.6rem;
+  margin-bottom: 1rem;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.2s, background 0.2s;
+}
+.glass-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(255,220,160,0.2) 30%,
+    rgba(255,220,160,0.2) 70%,
+    transparent);
+}
+.glass-card:hover {
+  background: var(--glass-h);
+  border-color: var(--border-h);
+}
+.card-label {
+  font-size: 0.55rem;
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--amber);
+  margin-bottom: 0.9rem;
+  opacity: 0.9;
+}
+
+/* ── TABS ── */
+div[data-testid="stTabs"] {
+  position: relative;
+  z-index: 1;
+}
 div[data-testid="stTabs"] [data-baseweb="tab-list"] {
   background: transparent !important;
-  border-bottom: 1px solid var(--muted) !important;
+  border-bottom: 1px solid var(--border) !important;
   gap: 0 !important;
-  margin: 2rem 0 0 !important;
+  margin: 0 0 1.8rem !important;
   padding: 0 !important;
 }
 div[data-testid="stTabs"] [data-baseweb="tab"] {
   background: transparent !important;
   border: none !important;
-  border-bottom: 2px solid transparent !important;
+  border-bottom: 1px solid transparent !important;
   margin-bottom: -1px !important;
   color: var(--muted) !important;
-  font-family: 'Azeret Mono', monospace !important;
-  font-size: 0.62rem !important;
-  letter-spacing: 0.2em !important;
+  font-family: 'Instrument Sans', sans-serif !important;
+  font-size: 0.65rem !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.22em !important;
   text-transform: uppercase !important;
-  padding: 0.7rem 2rem 0.7rem 0 !important;
-  transition: color 0.15s !important;
+  padding: 0.65rem 2rem 0.65rem 0 !important;
+  transition: color 0.2s !important;
 }
 div[data-testid="stTabs"] [aria-selected="true"] {
-  color: var(--green) !important;
-  border-bottom: 2px solid var(--green) !important;
+  color: var(--amber) !important;
+  border-bottom: 1px solid var(--amber) !important;
 }
 div[data-testid="stTabs"] [data-baseweb="tab"]:hover {
   color: var(--white) !important;
 }
-
-/* ══════════════════════════════
-   SECTION NUMBERS
-══════════════════════════════ */
-.section-block {
-  position: relative;
-  margin-top: 2.5rem;
-}
-.section-num {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 5rem;
-  line-height: 1;
-  color: var(--border);
-  position: absolute;
-  top: -1.2rem;
-  left: -0.5rem;
-  z-index: 0;
-  pointer-events: none;
-  user-select: none;
-}
-.section-label {
-  position: relative;
-  z-index: 1;
-  font-size: 0.58rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--cyan);
-  margin-bottom: 0.6rem;
-  padding-left: 0.2rem;
-  font-family: 'Azeret Mono', monospace;
+/* Supprime TOUT indicateur rouge/bleu injecté par Streamlit */
+div[data-testid="stTabs"] [data-baseweb="tab-highlight"],
+div[data-testid="stTabs"] [data-baseweb="tab-border"] {
+  background: transparent !important;
+  background-color: transparent !important;
+  display: none !important;
 }
 
-/* ══════════════════════════════
-   UPLOAD TERMINAL
-══════════════════════════════ */
+/* ── UPLOADER ── */
 [data-testid="stFileUploader"] {
   background: transparent !important;
-  position: relative;
-  z-index: 1;
 }
 [data-testid="stFileUploader"] section {
-  background: var(--bg2) !important;
-  border: 1px solid var(--muted) !important;
-  border-radius: 0 !important;
+  background: rgba(255,248,235,0.025) !important;
+  border: 1px dashed var(--border-h) !important;
+  border-radius: 8px !important;
   padding: 1.6rem 1.4rem !important;
-  transition: border-color 0.2s, background 0.2s !important;
-  position: relative !important;
-}
-/* coin supérieur gauche style terminal */
-[data-testid="stFileUploader"] section::before {
-  content: '> _';
-  position: absolute;
-  top: 0.5rem;
-  left: 0.7rem;
-  font-family: 'Space Mono', monospace;
-  font-size: 0.55rem;
-  color: var(--green-dim);
-  letter-spacing: 0.1em;
+  transition: all 0.2s !important;
 }
 [data-testid="stFileUploader"] section:hover,
 [data-testid="stFileUploader"] section:focus-within {
-  border-color: var(--green) !important;
-  background: #0d1a0d !important;
-  box-shadow: 0 0 20px #00ff411a inset !important;
+  background: rgba(232,185,106,0.05) !important;
+  border-color: var(--amber) !important;
+  box-shadow: 0 0 0 3px var(--amber-glow) !important;
 }
 [data-testid="stFileUploaderDropzoneInstructions"] * {
-  color: var(--white) !important;
-  font-family: 'Space Mono', monospace !important;
-  font-size: 0.78rem !important;
-}
-[data-testid="stFileUploaderDropzoneInstructions"] small {
   color: var(--muted) !important;
-  font-size: 0.62rem !important;
+  font-family: 'Instrument Sans', sans-serif !important;
+  font-size: 0.8rem !important;
+  font-weight: 300 !important;
 }
-/* Browse button */
+[data-testid="stFileUploaderDropzoneInstructions"] span {
+  color: var(--white) !important;
+  font-weight: 400 !important;
+}
 [data-testid="stFileUploader"] button,
 [data-testid="stBaseButton-secondary"] {
   background: transparent !important;
-  border: 1px solid var(--green) !important;
-  color: var(--green) !important;
-  font-family: 'Space Mono', monospace !important;
-  font-size: 0.62rem !important;
-  letter-spacing: 0.1em !important;
-  padding: 0.35rem 0.9rem !important;
-  border-radius: 0 !important;
+  border: 1px solid var(--border-h) !important;
+  color: var(--white) !important;
+  font-family: 'Instrument Sans', sans-serif !important;
+  font-size: 0.68rem !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.08em !important;
+  padding: 0.35rem 1rem !important;
+  border-radius: 4px !important;
   transition: all 0.15s !important;
-  margin-top: 0.4rem !important;
 }
 [data-testid="stFileUploader"] button:hover {
-  background: var(--green) !important;
-  color: var(--bg) !important;
+  background: var(--amber-glow) !important;
+  border-color: var(--amber) !important;
+  color: var(--amber) !important;
 }
 [data-testid="stFileUploaderFileName"] {
   color: var(--amber) !important;
-  font-family: 'Space Mono', monospace !important;
-  font-size: 0.72rem !important;
+  font-size: 0.75rem !important;
+  font-weight: 400 !important;
 }
 
-/* ══════════════════════════════
-   SPECS
-══════════════════════════════ */
+/* ── SPECS ── */
 .specs-band {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 0;
-  border: 1px solid var(--muted);
-  margin: 1.8rem 0;
-  background: var(--bg2);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 1.4rem 0;
 }
 .spec-item {
-  padding: 0.8rem 1rem;
-  border-right: 1px solid var(--border);
+  background: var(--bg-mid);
+  padding: 0.9rem 1rem;
   display: flex;
   flex-direction: column;
-  gap: 0.3rem;
+  gap: 0.35rem;
 }
-.spec-item:last-child { border-right: none; }
 .spec-key {
   font-size: 0.48rem;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   color: var(--muted);
-  font-family: 'Azeret Mono', monospace;
+  font-weight: 400;
 }
 .spec-val {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.4rem;
-  color: var(--green);
+  font-family: 'Fraunces', serif;
+  font-weight: 100;
+  font-size: 1.25rem;
+  color: var(--white);
   line-height: 1;
-  letter-spacing: 0.03em;
 }
 
-/* ══════════════════════════════
-   PREVIEW
-══════════════════════════════ */
+/* ── PREVIEW ── */
 .preview-shell {
-  border: 1px solid var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 1.4rem;
   background: #000;
-  margin-bottom: 1.5rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
 }
 .preview-topbar {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.4rem 0.8rem;
-  background: var(--bg2);
+  gap: 0.45rem;
+  padding: 0.5rem 0.9rem;
+  background: rgba(255,248,235,0.04);
   border-bottom: 1px solid var(--border);
 }
-.preview-dot {
-  width: 7px; height: 7px;
-  border-radius: 50%;
-  background: var(--muted);
-}
-.preview-dot.g { background: var(--green); box-shadow: 0 0 5px var(--green); }
-.preview-title-bar {
-  font-family: 'Space Mono', monospace;
-  font-size: 0.52rem;
-  color: var(--muted);
-  letter-spacing: 0.12em;
-  margin-left: 0.3rem;
+.pdot { width: 7px; height: 7px; border-radius: 50%; }
+.pdot-r { background: rgba(255,255,255,0.12); }
+.pdot-y { background: rgba(255,255,255,0.12); }
+.pdot-g { background: var(--amber); opacity: 0.7; }
+.preview-filename {
+  font-size: 0.5rem;
+  letter-spacing: 0.14em;
+  color: var(--muted2);
+  margin-left: 0.4rem;
+  font-weight: 400;
 }
 
-/* ══════════════════════════════
-   BUTTONS
-══════════════════════════════ */
+/* ── BUTTONS ── */
 div.stButton > button {
   width: 100% !important;
-  background: transparent !important;
-  border: 1px solid var(--white) !important;
+  background: var(--glass) !important;
+  border: 1px solid var(--border-h) !important;
   color: var(--white) !important;
-  font-family: 'Bebas Neue', sans-serif !important;
-  font-size: 1.35rem !important;
-  letter-spacing: 0.12em !important;
-  padding: 0.7rem 1rem !important;
-  border-radius: 0 !important;
-  transition: all 0.15s !important;
-  line-height: 1 !important;
+  font-family: 'Instrument Sans', sans-serif !important;
+  font-size: 0.72rem !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.18em !important;
+  text-transform: uppercase !important;
+  padding: 0.85rem 1rem !important;
+  border-radius: 8px !important;
+  transition: all 0.2s !important;
+  backdrop-filter: blur(8px) !important;
 }
 div.stButton > button:hover {
-  background: var(--white) !important;
-  color: var(--bg) !important;
-  box-shadow: 0 0 25px rgba(232,232,240,0.15) !important;
+  background: var(--amber-glow) !important;
+  border-color: var(--amber) !important;
+  color: var(--amber) !important;
+  box-shadow: 0 0 20px var(--amber-glow) !important;
 }
 div.stButton > button:disabled {
-  border-color: var(--muted) !important;
-  color: var(--muted) !important;
+  opacity: 0.3 !important;
+  cursor: not-allowed !important;
 }
 
 div[data-testid="stDownloadButton"] > button {
   width: 100% !important;
-  background: var(--green) !important;
-  border: none !important;
-  color: var(--bg) !important;
-  font-family: 'Bebas Neue', sans-serif !important;
-  font-size: 1.35rem !important;
-  letter-spacing: 0.12em !important;
-  padding: 0.7rem 1rem !important;
-  border-radius: 0 !important;
+  background: var(--green-glow) !important;
+  border: 1px solid rgba(111,207,142,0.35) !important;
+  color: var(--green) !important;
+  font-family: 'Instrument Sans', sans-serif !important;
+  font-size: 0.72rem !important;
   font-weight: 400 !important;
-  box-shadow: 0 0 30px #00ff4133 !important;
-  line-height: 1 !important;
+  letter-spacing: 0.18em !important;
+  text-transform: uppercase !important;
+  padding: 0.85rem 1rem !important;
+  border-radius: 8px !important;
+  transition: all 0.2s !important;
 }
 div[data-testid="stDownloadButton"] > button:hover {
-  background: #33ff6a !important;
+  background: rgba(111,207,142,0.22) !important;
+  box-shadow: 0 0 20px var(--green-glow) !important;
 }
 
-/* ══════════════════════════════
-   PROGRESS
-══════════════════════════════ */
+/* ── PROGRESS ── */
 div[data-testid="stProgress"] > div {
   background: var(--border) !important;
-  border-radius: 0 !important;
-  height: 4px !important;
+  border-radius: 99px !important;
+  height: 3px !important;
 }
 div[data-testid="stProgress"] > div > div {
-  background: var(--green) !important;
-  border-radius: 0 !important;
-  box-shadow: 0 0 8px var(--green) !important;
+  background: linear-gradient(90deg, var(--amber), var(--green)) !important;
+  border-radius: 99px !important;
 }
 div[data-testid="stProgress"] p {
-  font-family: 'Space Mono', monospace !important;
   font-size: 0.6rem !important;
   color: var(--muted) !important;
-  letter-spacing: 0.12em !important;
+  letter-spacing: 0.1em !important;
+  font-family: 'Instrument Sans', sans-serif !important;
 }
 
-/* ══════════════════════════════
-   STATUS
-══════════════════════════════ */
+/* ── STATUS ── */
 .status {
-  font-family: 'Space Mono', monospace;
   font-size: 0.65rem;
-  letter-spacing: 0.08em;
-  padding: 0.6rem 0.8rem;
-  border-left: 2px solid;
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  padding: 0.65rem 1rem;
+  border-radius: 6px;
+  border: 1px solid;
   margin: 0.8rem 0;
-  line-height: 1.6;
+  font-family: 'Instrument Sans', sans-serif;
 }
-.status::before { margin-right: 0.5rem; }
-.status-ok   { border-color: var(--green); color: var(--green); background: #001a00; }
-.status-ok::before { content: '✓'; }
-.status-warn { border-color: var(--amber); color: var(--amber); background: #1a1200; }
-.status-warn::before { content: '⧖'; }
-.status-err  { border-color: var(--red);   color: var(--red);   background: #1a0000; }
-.status-err::before  { content: '✗'; }
-.status-idle { border-color: var(--border); color: var(--muted); }
-.status-idle::before { content: '○'; }
+.status-ok   {
+  border-color: rgba(111,207,142,0.3);
+  color: var(--green);
+  background: var(--green-glow);
+}
+.status-warn {
+  border-color: rgba(212,168,67,0.3);
+  color: var(--warn);
+  background: rgba(212,168,67,0.07);
+}
+.status-err  {
+  border-color: rgba(224,112,112,0.3);
+  color: var(--red);
+  background: rgba(224,112,112,0.07);
+}
+.status-idle {
+  border-color: var(--border);
+  color: var(--muted);
+  background: transparent;
+}
 
-/* ══════════════════════════════
-   FOOTER
-══════════════════════════════ */
+/* ── FOOTER ── */
 .footer {
   margin-top: 5rem;
-  padding: 1.2rem 0;
-  border-top: 1px solid var(--muted);
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  gap: 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
 }
 .footer-name {
-  font-family: 'Bebas Neue', sans-serif;
-  font-size: 1.1rem;
-  letter-spacing: 0.08em;
-  color: var(--green);
+  font-family: 'Fraunces', serif;
+  font-weight: 100;
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--amber);
+  opacity: 0.8;
 }
 .footer-legal {
-  font-family: 'Azeret Mono', monospace;
-  font-size: 0.5rem;
+  font-size: 0.52rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--muted);
-  text-align: right;
+  color: var(--muted2);
 }
 
 /* Spinner */
 div[data-testid="stSpinner"] p {
-  font-family: 'Space Mono', monospace !important;
-  font-size: 0.62rem !important;
   color: var(--muted) !important;
-  letter-spacing: 0.1em !important;
+  font-size: 0.65rem !important;
+  letter-spacing: 0.08em !important;
+}
+
+/* Ensure all content above pseudo-elements */
+div[data-testid="stTabs"],
+.glass-card, [data-testid="stFileUploader"],
+div.stButton, div[data-testid="stDownloadButton"],
+.specs-band, .preview-shell, .status, .footer {
+  position: relative;
+  z-index: 1;
 }
 </style>
 """, unsafe_allow_html=True)
 
-# ── HEADER ────────────────────────────────────────────────────────────────────
+# ── HEADER ─────────────────────────────────────────────────────────────────────
 st.markdown("""
 <div class="site-header">
-  <div class="site-header-bg"></div>
-  <div class="title-row">
-    <span class="title-main">LULU<span class="title-accent">FLIX</span></span>
-  </div>
-  <div class="header-meta">
-    <span class="header-badge">v1.0</span>
-    <span class="header-status">WATERMARK ENGINE <span class="blink">█</span></span>
-  </div>
+  <p class="header-eyebrow">Watermark Engine</p>
+  <h1 class="header-title">Lulu<span>flix</span></h1>
+  <div class="header-divider"></div>
 </div>
 """, unsafe_allow_html=True)
 
-# ── HELPERS ───────────────────────────────────────────────────────────────────
+# ── HELPERS ────────────────────────────────────────────────────────────────────
 
 def composite_logo(base: Image.Image, logo_path: str) -> Image.Image:
     W, H = base.size
     logo_w = int(W * 0.15)
     logo = Image.open(logo_path).convert("RGBA")
     ratio = logo_w / logo.width
-    logo_h = int(logo.height * ratio)
-    logo = logo.resize((logo_w, logo_h), Image.LANCZOS)
+    logo = logo.resize((logo_w, int(logo.height * ratio)), Image.LANCZOS)
     x = W - logo_w - int(W * 0.05)
     y = int(H * 0.07)
     out = base.convert("RGBA")
@@ -566,40 +535,32 @@ def render_video(video_path, logo_path, output_path, info, progress_cb=None):
     if process.returncode != 0:
         raise RuntimeError(process.stderr.read())
 
-# ── SESSION STATE ──────────────────────────────────────────────────────────────
+# ── SESSION STATE ───────────────────────────────────────────────────────────────
 for k in ["thumbnail", "rendered_bytes"]:
     if k not in st.session_state:
         st.session_state[k] = None
 
-# ── TABS ───────────────────────────────────────────────────────────────────────
-tab_v, tab_p = st.tabs(["// VIDÉO", "// PHOTO"])
+# ── TABS ────────────────────────────────────────────────────────────────────────
+tab_v, tab_p = st.tabs(["Vidéo", "Photo"])
 
-# ══════════════════════ VIDÉO ══════════════════════════════════════════════════
+# ═══════════════════════════════ VIDÉO ════════════════════════════════════════
 with tab_v:
 
-    st.markdown("""
-    <div class="section-block">
-      <span class="section-num">01</span>
-      <p class="section-label">Fichier source</p>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown('<div class="glass-card"><p class="card-label">Source</p>', unsafe_allow_html=True)
     video_file = st.file_uploader(
         "Déposez votre vidéo ici",
         type=["mp4", "mov", "avi", "mkv", "webm"],
         key="vu"
     )
+    st.markdown('</div>', unsafe_allow_html=True)
 
-    st.markdown("""
-    <div class="section-block">
-      <span class="section-num">02</span>
-      <p class="section-label">Logo PNG transparent</p>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown('<div class="glass-card"><p class="card-label">Logo — PNG transparent</p>', unsafe_allow_html=True)
     logo_v = st.file_uploader(
         "Déposez votre logo ici",
         type=["png"],
         key="vl"
     )
+    st.markdown('</div>', unsafe_allow_html=True)
 
     if video_file and logo_v:
         tmp = tempfile.mkdtemp()
@@ -633,16 +594,16 @@ with tab_v:
         """, unsafe_allow_html=True)
 
         if st.session_state.thumbnail is None:
-            with st.spinner("// chargement aperçu..."):
+            with st.spinner("Génération de l'aperçu…"):
                 st.session_state.thumbnail = make_thumbnail(vp, lp, nfo)
 
         st.markdown("""
         <div class="preview-shell">
           <div class="preview-topbar">
-            <div class="preview-dot"></div>
-            <div class="preview-dot"></div>
-            <div class="preview-dot g"></div>
-            <span class="preview-title-bar">PREVIEW — FRAME 0001</span>
+            <div class="pdot pdot-r"></div>
+            <div class="pdot pdot-y"></div>
+            <div class="pdot pdot-g"></div>
+            <span class="preview-filename">aperçu — image 0</span>
           </div>
         </div>
         """, unsafe_allow_html=True)
@@ -650,59 +611,53 @@ with tab_v:
 
         st.markdown("<br>", unsafe_allow_html=True)
 
-        if st.button("GÉNÉRER LE RENDU", key="vbtn",
+        if st.button("Générer le rendu", key="vbtn",
                      disabled=bool(st.session_state.rendered_bytes)):
             out = os.path.join(tmp, "video_ready_to_post.mp4")
             ph_p, ph_s = st.empty(), st.empty()
             bar = ph_p.progress(0.0, text="")
-            ph_s.markdown('<div class="status status-warn">TRAITEMENT EN COURS...</div>', unsafe_allow_html=True)
+            ph_s.markdown('<div class="status status-warn">Traitement en cours…</div>', unsafe_allow_html=True)
             try:
                 render_video(vp, lp, out, nfo,
-                             lambda p: bar.progress(p, text=f"// {int(p*100)}% ENCODÉ"))
-                bar.progress(1.0, text="// 100% ENCODÉ")
-                ph_s.markdown('<div class="status status-ok">RENDER COMPLETE — FICHIER PRÊT</div>', unsafe_allow_html=True)
+                             lambda p: bar.progress(p, text=f"{int(p*100)} %"))
+                bar.progress(1.0, text="100 %")
+                ph_s.markdown('<div class="status status-ok">Rendu terminé — fichier prêt.</div>', unsafe_allow_html=True)
                 with open(out, "rb") as f:
                     st.session_state.rendered_bytes = f.read()
             except Exception as e:
-                ph_s.markdown(f'<div class="status status-err">ERREUR: {e}</div>', unsafe_allow_html=True)
+                ph_s.markdown(f'<div class="status status-err">{e}</div>', unsafe_allow_html=True)
 
         if st.session_state.rendered_bytes:
             st.download_button(
-                "↓ TÉLÉCHARGER LA VIDÉO",
+                "↓ Télécharger la vidéo",
                 data=st.session_state.rendered_bytes,
                 file_name="video_ready_to_post.mp4",
                 mime="video/mp4",
                 key="vdl"
             )
-    else:
-        st.markdown('<div class="status status-idle">EN ATTENTE D\'INPUT...</div>', unsafe_allow_html=True)
 
-# ══════════════════════ PHOTO ══════════════════════════════════════════════════
+    else:
+        st.markdown('<div class="status status-idle">Déposez une vidéo et un logo pour commencer.</div>', unsafe_allow_html=True)
+
+
+# ═══════════════════════════════ PHOTO ════════════════════════════════════════
 with tab_p:
 
-    st.markdown("""
-    <div class="section-block">
-      <span class="section-num">01</span>
-      <p class="section-label">Image source</p>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown('<div class="glass-card"><p class="card-label">Source</p>', unsafe_allow_html=True)
     photo_file = st.file_uploader(
         "Déposez votre image ici",
         type=["png", "jpg", "jpeg"],
         key="pu"
     )
+    st.markdown('</div>', unsafe_allow_html=True)
 
-    st.markdown("""
-    <div class="section-block">
-      <span class="section-num">02</span>
-      <p class="section-label">Logo PNG transparent</p>
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown('<div class="glass-card"><p class="card-label">Logo — PNG transparent</p>', unsafe_allow_html=True)
     logo_p = st.file_uploader(
         "Déposez votre logo ici",
         type=["png"],
         key="pl"
     )
+    st.markdown('</div>', unsafe_allow_html=True)
 
     if photo_file and logo_p:
         base = Image.open(photo_file)
@@ -738,10 +693,10 @@ with tab_p:
         st.markdown("""
         <div class="preview-shell">
           <div class="preview-topbar">
-            <div class="preview-dot"></div>
-            <div class="preview-dot"></div>
-            <div class="preview-dot g"></div>
-            <span class="preview-title-bar">PREVIEW — OUTPUT</span>
+            <div class="pdot pdot-r"></div>
+            <div class="pdot pdot-y"></div>
+            <div class="pdot pdot-g"></div>
+            <span class="preview-filename">aperçu — output</span>
           </div>
         </div>
         """, unsafe_allow_html=True)
@@ -756,21 +711,23 @@ with tab_p:
             result_img.convert("RGB").save(buf, format="JPEG", quality=97, subsampling=0)
             fname, mime = "photo_ready_to_post.jpg", "image/jpeg"
 
-        st.markdown('<div class="status status-ok">OUTPUT READY</div>', unsafe_allow_html=True)
+        st.markdown('<div class="status status-ok">Prêt.</div>', unsafe_allow_html=True)
         st.download_button(
-            "↓ TÉLÉCHARGER LA PHOTO",
+            "↓ Télécharger la photo",
             data=buf.getvalue(),
             file_name=fname,
             mime=mime,
             key="pdl"
         )
+
     else:
-        st.markdown('<div class="status status-idle">EN ATTENTE D\'INPUT...</div>', unsafe_allow_html=True)
+        st.markdown('<div class="status status-idle">Déposez une image et un logo pour commencer.</div>', unsafe_allow_html=True)
+
 
 # ── FOOTER ─────────────────────────────────────────────────────────────────────
 st.markdown("""
 <div class="footer">
-  <span class="footer-name">LUCAS BESSONNAT</span>
+  <span class="footer-name">Lucas Bessonnat</span>
   <span class="footer-legal">Aucune donnée n'est conservée sur un serveur</span>
 </div>
 """, unsafe_allow_html=True)

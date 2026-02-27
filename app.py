@@ -55,28 +55,7 @@ html, body,
 [data-testid="stToolbar"],
 [data-testid="stDecoration"] { display: none !important; }
 
-/* ── BARRE DE MENU DU HAUT ── */
-.menubar {
-  background: var(--win-face);
-  border-top: 2px solid var(--win-highlight);
-  border-left: 2px solid var(--win-highlight);
-  border-right: 2px solid var(--win-dshadow);
-  border-bottom: 2px solid var(--win-dshadow);
-  padding: 2px 4px;
-  display: flex;
-  align-items: center;
-  gap: 0;
-  margin-bottom: 8px;
-  font-size: 11px;
-}
-.menu-item {
-  padding: 2px 8px;
-  cursor: default;
-}
-.menu-item:hover {
-  background: var(--win-titlebar);
-  color: var(--win-white);
-}
+
 
 /* ── FENÊTRE PRINCIPALE ── */
 .win-window {
@@ -424,15 +403,7 @@ div[data-testid="stSpinner"] p {
 </style>
 """, unsafe_allow_html=True)
 
-# ── BARRE DE MENU ──────────────────────────────────────────────────────────────
-st.markdown("""
-<div class="menubar">
-  <span class="menu-item">Fichier</span>
-  <span class="menu-item">Edition</span>
-  <span class="menu-item">Affichage</span>
-  <span class="menu-item">Aide</span>
-</div>
-""", unsafe_allow_html=True)
+
 
 # ── FENÊTRE PRINCIPALE ─────────────────────────────────────────────────────────
 st.markdown("""

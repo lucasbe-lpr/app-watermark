@@ -6,417 +6,396 @@ from PIL import Image
 import io
 
 st.set_page_config(
-    page_title="Luluflix v1.0",
-    page_icon="🖥️",
+    page_title="Luluflix",
+    page_icon="▶",
     layout="centered",
     initial_sidebar_state="collapsed",
 )
 
-st.markdown("""
+LOGO_URL = "https://github.com/lucasbe-lpr/app-watermark/blob/main/luluflix.png?raw=true"
+
+st.markdown(f"""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&display=swap');
 
-:root {
-  --win-bg:        #c0c0c0;
-  --win-dark:      #808080;
-  --win-darker:    #404040;
-  --win-white:     #ffffff;
-  --win-black:     #000000;
-  --win-titlebar:  #000080;
-  --win-title-txt: #ffffff;
-  --win-face:      #c0c0c0;
-  --win-highlight: #ffffff;
-  --win-shadow:    #808080;
-  --win-dshadow:   #404040;
-  --win-blue:      #0000ff;
-  --win-green:     #008000;
-  --win-red:       #ff0000;
-}
+:root {{
+  --blue:      #0068B1;
+  --blue-mid:  #005a99;
+  --blue-dark: #004880;
+  --blue-pale: #e8f2fa;
+  --blue-xpal: #f0f7fd;
+  --white:     #ffffff;
+  --bg:        #f7f8fa;
+  --ink:       #111827;
+  --muted:     #6b7280;
+  --border:    #e5e7eb;
+  --border-b:  #d0dce8;
+  --green:     #16a34a;
+  --green-bg:  #f0fdf4;
+  --warn:      #d97706;
+  --warn-bg:   #fffbeb;
+  --red:       #dc2626;
+  --red-bg:    #fef2f2;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
+}}
 
-*, *::before, *::after { box-sizing: border-box; }
+*, *::before, *::after {{ box-sizing: border-box; }}
 
 html, body,
 [data-testid="stAppViewContainer"],
 [data-testid="stMain"],
-.main {
-  background: var(--win-bg) !important;
-  color: var(--win-black) !important;
-  font-family: 'Share Tech Mono', 'Courier New', monospace !important;
-  font-size: 13px !important;
-}
+.main {{
+  background: var(--bg) !important;
+  color: var(--ink) !important;
+  font-family: 'Barlow', sans-serif !important;
+  font-weight: 400 !important;
+}}
 
-.block-container {
+.block-container {{
   background: transparent !important;
-  padding: 1rem 1.5rem 3rem !important;
-  max-width: 680px !important;
-}
+  padding: 0 1.5rem 4rem !important;
+  max-width: 720px !important;
+}}
 
 #MainMenu, footer, header,
 [data-testid="stToolbar"],
-[data-testid="stDecoration"] { display: none !important; }
+[data-testid="stDecoration"] {{ display: none !important; }}
 
-
-
-/* ── FENÊTRE PRINCIPALE ── */
-.win-window {
-  background: var(--win-face);
-  border-top: 2px solid var(--win-highlight);
-  border-left: 2px solid var(--win-highlight);
-  border-right: 2px solid var(--win-dshadow);
-  border-bottom: 2px solid var(--win-dshadow);
-  margin-bottom: 8px;
-}
-.win-titlebar {
-  background: var(--win-titlebar);
-  color: var(--win-title-txt);
-  padding: 3px 6px 3px 8px;
+/* ─── HEADER ─── */
+.site-header {{
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 0 1.5rem;
+  margin: 0 -1.5rem 2rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 12px;
-  font-weight: bold;
-  user-select: none;
-  font-family: 'Share Tech Mono', 'Courier New', monospace;
-}
-.titlebar-btns {
-  display: flex;
-  gap: 2px;
-}
-.tbtn {
-  width: 16px; height: 14px;
-  background: var(--win-face);
-  border-top: 1px solid var(--win-highlight);
-  border-left: 1px solid var(--win-highlight);
-  border-right: 1px solid var(--win-dshadow);
-  border-bottom: 1px solid var(--win-dshadow);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 9px;
-  color: var(--win-black);
-  cursor: default;
-  font-family: 'Marlett', 'Share Tech Mono', monospace;
-}
-.win-body {
-  padding: 10px 12px 12px;
-}
+  height: 64px;
+  box-shadow: var(--shadow-sm);
+}}
+.header-logo img {{
+  height: 36px;
+  width: auto;
+  display: block;
+}}
+.header-badge {{
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--blue);
+  background: var(--blue-pale);
+  border: 1px solid var(--border-b);
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+}}
 
-/* ── GROUPBOX / PANEL ── */
-.groupbox {
-  border-top: 1px solid var(--win-shadow);
-  border-left: 1px solid var(--win-shadow);
-  border-right: 1px solid var(--win-highlight);
-  border-bottom: 1px solid var(--win-highlight);
-  padding: 12px 10px 10px;
-  margin-bottom: 10px;
-  position: relative;
-}
-.groupbox-label {
-  position: absolute;
-  top: -8px; left: 8px;
-  background: var(--win-face);
-  padding: 0 4px;
-  font-size: 11px;
-  font-family: 'Share Tech Mono', 'Courier New', monospace;
-}
-
-/* ── INSET / SUNKEN ── */
-.inset {
-  border-top: 1px solid var(--win-shadow);
-  border-left: 1px solid var(--win-shadow);
-  border-right: 1px solid var(--win-highlight);
-  border-bottom: 1px solid var(--win-highlight);
-  background: var(--win-white);
-  padding: 6px 8px;
-  margin-bottom: 6px;
-  font-size: 12px;
-  font-family: 'Share Tech Mono', 'Courier New', monospace;
-}
-
-/* ── UPLOAD ── */
-[data-testid="stFileUploader"] {
+/* ─── TABS ─── */
+div[data-testid="stTabs"] [data-baseweb="tab-list"] {{
   background: transparent !important;
-}
-[data-testid="stFileUploader"] section {
-  background: var(--win-white) !important;
-  border-top: 1px solid var(--win-shadow) !important;
-  border-left: 1px solid var(--win-shadow) !important;
-  border-right: 1px solid var(--win-highlight) !important;
-  border-bottom: 1px solid var(--win-highlight) !important;
-  border-radius: 0 !important;
-  padding: 14px 10px !important;
-}
-[data-testid="stFileUploader"] section:hover,
-[data-testid="stFileUploader"] section:focus-within {
-  outline: 1px dotted var(--win-black) !important;
-  outline-offset: 2px !important;
-}
-[data-testid="stFileUploaderDropzoneInstructions"] * {
-  color: var(--win-black) !important;
-  font-family: 'Share Tech Mono', 'Courier New', monospace !important;
-  font-size: 12px !important;
-}
-[data-testid="stFileUploaderDropzoneInstructions"] small {
-  color: var(--win-darker) !important;
-  font-size: 10px !important;
-}
-/* Bouton Browse — style Win95 */
-[data-testid="stFileUploader"] button,
-[data-testid="stBaseButton-secondary"] {
-  background: var(--win-face) !important;
-  border-top: 2px solid var(--win-highlight) !important;
-  border-left: 2px solid var(--win-highlight) !important;
-  border-right: 2px solid var(--win-dshadow) !important;
-  border-bottom: 2px solid var(--win-dshadow) !important;
-  color: var(--win-black) !important;
-  font-family: 'Share Tech Mono', 'Courier New', monospace !important;
-  font-size: 11px !important;
-  padding: 3px 12px !important;
-  border-radius: 0 !important;
-  cursor: default !important;
-  min-width: 75px !important;
-  text-align: center !important;
-}
-[data-testid="stFileUploader"] button:hover {
-  background: var(--win-face) !important;
-}
-[data-testid="stFileUploader"] button:active {
-  border-top: 2px solid var(--win-dshadow) !important;
-  border-left: 2px solid var(--win-dshadow) !important;
-  border-right: 2px solid var(--win-highlight) !important;
-  border-bottom: 2px solid var(--win-highlight) !important;
-}
-[data-testid="stFileUploaderFileName"] {
-  color: var(--win-black) !important;
-  font-size: 11px !important;
-  font-family: 'Share Tech Mono', 'Courier New', monospace !important;
-}
-
-/* ── TABS ── */
-div[data-testid="stTabs"] [data-baseweb="tab-list"] {
-  background: transparent !important;
-  border-bottom: 2px solid var(--win-shadow) !important;
+  border-bottom: 2px solid var(--border) !important;
   gap: 0 !important;
-  margin-bottom: 10px !important;
+  margin-bottom: 1.5rem !important;
   padding: 0 !important;
-}
-div[data-testid="stTabs"] [data-baseweb="tab"] {
-  background: var(--win-face) !important;
-  border-top: 2px solid var(--win-highlight) !important;
-  border-left: 2px solid var(--win-highlight) !important;
-  border-right: 2px solid var(--win-shadow) !important;
-  border-bottom: none !important;
-  color: var(--win-black) !important;
-  font-family: 'Share Tech Mono', 'Courier New', monospace !important;
-  font-size: 12px !important;
-  letter-spacing: 0 !important;
-  text-transform: none !important;
-  padding: 4px 16px !important;
-  margin-right: 3px !important;
+}}
+div[data-testid="stTabs"] [data-baseweb="tab"] {{
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 2px solid transparent !important;
   margin-bottom: -2px !important;
-  border-radius: 0 !important;
-}
-div[data-testid="stTabs"] [aria-selected="true"] {
-  background: var(--win-face) !important;
-  color: var(--win-black) !important;
-  border-bottom: 2px solid var(--win-face) !important;
-  padding-top: 6px !important;
-  font-weight: bold !important;
-}
+  color: var(--muted) !important;
+  font-family: 'Barlow Condensed', sans-serif !important;
+  font-size: 0.9rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.06em !important;
+  text-transform: uppercase !important;
+  padding: 0.6rem 1.4rem 0.6rem 0 !important;
+  transition: color 0.15s !important;
+}}
+div[data-testid="stTabs"] [aria-selected="true"] {{
+  color: var(--blue) !important;
+  border-bottom: 2px solid var(--blue) !important;
+}}
+div[data-testid="stTabs"] [data-baseweb="tab"]:hover {{
+  color: var(--ink) !important;
+}}
 div[data-testid="stTabs"] [data-baseweb="tab-highlight"],
-div[data-testid="stTabs"] [data-baseweb="tab-border"] {
+div[data-testid="stTabs"] [data-baseweb="tab-border"] {{
   display: none !important;
   background: transparent !important;
-}
+}}
 
-/* ── SPECS ── */
-.specs-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 11px;
-  margin-bottom: 10px;
-  font-family: 'Share Tech Mono', 'Courier New', monospace;
-}
-.specs-table td {
-  padding: 2px 8px;
-  border: 1px solid var(--win-shadow);
-}
-.specs-table td:first-child {
-  background: var(--win-face);
-  color: var(--win-darker);
-  width: 38%;
-}
-.specs-table td:last-child {
-  background: var(--win-white);
-  font-weight: bold;
-}
-
-/* ── PREVIEW ── */
-.preview-inset {
-  border-top: 1px solid var(--win-shadow);
-  border-left: 1px solid var(--win-shadow);
-  border-right: 1px solid var(--win-highlight);
-  border-bottom: 1px solid var(--win-highlight);
-  background: #000;
-  margin-bottom: 10px;
-  overflow: hidden;
-}
-.preview-caption {
-  background: var(--win-titlebar);
-  color: var(--win-white);
-  font-size: 10px;
-  padding: 1px 6px;
-  font-family: 'Share Tech Mono', 'Courier New', monospace;
-}
-
-/* ── BUTTONS ── */
-div.stButton > button {
-  background: var(--win-face) !important;
-  border-top: 2px solid var(--win-highlight) !important;
-  border-left: 2px solid var(--win-highlight) !important;
-  border-right: 2px solid var(--win-dshadow) !important;
-  border-bottom: 2px solid var(--win-dshadow) !important;
-  color: var(--win-black) !important;
-  font-family: 'Share Tech Mono', 'Courier New', monospace !important;
-  font-size: 12px !important;
-  font-weight: bold !important;
-  text-transform: none !important;
-  letter-spacing: 0 !important;
-  padding: 4px 20px !important;
-  border-radius: 0 !important;
-  min-width: 120px !important;
-  cursor: default !important;
-  width: auto !important;
-  display: block !important;
-  margin: 0 auto !important;
-  transition: none !important;
-}
-div.stButton > button:hover {
-  background: var(--win-face) !important;
-}
-div.stButton > button:active,
-div.stButton > button:focus {
-  border-top: 2px solid var(--win-dshadow) !important;
-  border-left: 2px solid var(--win-dshadow) !important;
-  border-right: 2px solid var(--win-highlight) !important;
-  border-bottom: 2px solid var(--win-highlight) !important;
-  outline: 1px dotted var(--win-black) !important;
-  outline-offset: -4px !important;
-}
-div.stButton > button:disabled {
-  color: var(--win-shadow) !important;
-  text-shadow: 1px 1px 0 var(--win-white) !important;
-}
-
-div[data-testid="stDownloadButton"] > button {
-  background: var(--win-face) !important;
-  border-top: 2px solid var(--win-highlight) !important;
-  border-left: 2px solid var(--win-highlight) !important;
-  border-right: 2px solid var(--win-dshadow) !important;
-  border-bottom: 2px solid var(--win-dshadow) !important;
-  color: var(--win-black) !important;
-  font-family: 'Share Tech Mono', 'Courier New', monospace !important;
-  font-size: 12px !important;
-  font-weight: bold !important;
-  text-transform: none !important;
-  letter-spacing: 0 !important;
-  padding: 4px 20px !important;
-  border-radius: 0 !important;
-  width: auto !important;
-  display: block !important;
-  margin: 0 auto !important;
-}
-
-/* ── PROGRESS ── */
-div[data-testid="stProgress"] > div {
-  background: var(--win-white) !important;
-  border-top: 1px solid var(--win-shadow) !important;
-  border-left: 1px solid var(--win-shadow) !important;
-  border-right: 1px solid var(--win-highlight) !important;
-  border-bottom: 1px solid var(--win-highlight) !important;
-  border-radius: 0 !important;
-  height: 16px !important;
-}
-div[data-testid="stProgress"] > div > div {
-  background: var(--win-titlebar) !important;
-  border-radius: 0 !important;
-  height: 100% !important;
-}
-div[data-testid="stProgress"] p {
-  font-family: 'Share Tech Mono', 'Courier New', monospace !important;
-  font-size: 10px !important;
-  color: var(--win-darker) !important;
-}
-
-/* ── STATUS ── */
-.status-bar {
-  background: var(--win-face);
-  border-top: 1px solid var(--win-shadow);
-  padding: 2px 6px;
-  font-size: 11px;
-  font-family: 'Share Tech Mono', 'Courier New', monospace;
+/* ─── CARDS ─── */
+.card {{
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 1.2rem 1.4rem;
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow-sm);
+}}
+.card-label {{
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.75rem;
   display: flex;
   align-items: center;
-  gap: 4px;
-}
-.status-panel {
-  border-top: 1px solid var(--win-shadow);
-  border-left: 1px solid var(--win-shadow);
-  border-right: 1px solid var(--win-highlight);
-  border-bottom: 1px solid var(--win-highlight);
-  padding: 1px 8px;
-  font-size: 11px;
-  font-family: 'Share Tech Mono', 'Courier New', monospace;
-  flex: 1;
-}
-.msg-ok   { color: var(--win-green); }
-.msg-warn { color: var(--win-darker); }
-.msg-err  { color: var(--win-red); font-weight: bold; }
-.msg-idle { color: var(--win-shadow); }
+  gap: 0.4rem;
+}}
+.card-label::before {{
+  content: '';
+  display: inline-block;
+  width: 3px;
+  height: 12px;
+  background: var(--blue);
+  border-radius: 2px;
+}}
 
-/* ── FOOTER / STATUSBAR ── */
-.app-statusbar {
-  background: var(--win-face);
-  border-top: 2px solid var(--win-shadow);
-  padding: 3px 8px;
+/* ─── UPLOADER ─── */
+[data-testid="stFileUploader"] {{
+  background: transparent !important;
+}}
+[data-testid="stFileUploader"] section {{
+  background: var(--blue-xpal) !important;
+  border: 1.5px dashed var(--border-b) !important;
+  border-radius: 8px !important;
+  padding: 1.4rem 1.2rem !important;
+  transition: border-color 0.2s, background 0.2s !important;
+}}
+[data-testid="stFileUploader"] section:hover,
+[data-testid="stFileUploader"] section:focus-within {{
+  border-color: var(--blue) !important;
+  background: var(--blue-pale) !important;
+}}
+[data-testid="stFileUploaderDropzoneInstructions"] * {{
+  color: var(--muted) !important;
+  font-family: 'Barlow', sans-serif !important;
+  font-size: 0.85rem !important;
+}}
+[data-testid="stFileUploaderDropzoneInstructions"] span {{
+  color: var(--ink) !important;
+  font-weight: 500 !important;
+}}
+[data-testid="stFileUploader"] button,
+[data-testid="stBaseButton-secondary"] {{
+  background: var(--white) !important;
+  border: 1.5px solid var(--blue) !important;
+  color: var(--blue) !important;
+  font-family: 'Barlow Condensed', sans-serif !important;
+  font-size: 0.8rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.06em !important;
+  padding: 0.35rem 1rem !important;
+  border-radius: 6px !important;
+  transition: all 0.15s !important;
+}}
+[data-testid="stFileUploader"] button:hover {{
+  background: var(--blue) !important;
+  color: var(--white) !important;
+}}
+[data-testid="stFileUploaderFileName"] {{
+  color: var(--blue-dark) !important;
+  font-weight: 600 !important;
+  font-size: 0.82rem !important;
+}}
+
+/* ─── SPECS ─── */
+.specs-grid {{
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 0 0 1.2rem;
+}}
+.spec-item {{
+  background: var(--white);
+  padding: 0.85rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}}
+.spec-key {{
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}}
+.spec-val {{
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1;
+}}
+
+/* ─── PREVIEW ─── */
+.preview-shell {{
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 1.2rem;
+  background: #111;
+  box-shadow: var(--shadow-sm);
+}}
+.preview-topbar {{
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 0.45rem 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}}
+.ptag {{
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.62rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--white);
+  background: var(--blue);
+  padding: 0.1rem 0.5rem;
+  border-radius: 3px;
+}}
+.preview-name {{
+  font-size: 0.7rem;
+  color: var(--muted);
+  font-family: 'Barlow', sans-serif;
+}}
+
+/* ─── BUTTONS ─── */
+div.stButton > button {{
+  width: 100% !important;
+  background: var(--blue) !important;
+  border: none !important;
+  color: var(--white) !important;
+  font-family: 'Barlow Condensed', sans-serif !important;
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  padding: 0.75rem 1.5rem !important;
+  border-radius: 8px !important;
+  transition: background 0.15s, transform 0.1s !important;
+  box-shadow: 0 2px 8px rgba(0,104,177,0.3) !important;
+}}
+div.stButton > button:hover {{
+  background: var(--blue-mid) !important;
+  box-shadow: 0 4px 12px rgba(0,104,177,0.4) !important;
+}}
+div.stButton > button:active {{
+  transform: translateY(1px) !important;
+}}
+div.stButton > button:disabled {{
+  background: var(--border) !important;
+  color: var(--muted) !important;
+  box-shadow: none !important;
+}}
+
+div[data-testid="stDownloadButton"] > button {{
+  width: 100% !important;
+  background: var(--green) !important;
+  border: none !important;
+  color: var(--white) !important;
+  font-family: 'Barlow Condensed', sans-serif !important;
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  padding: 0.75rem 1.5rem !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 8px rgba(22,163,74,0.25) !important;
+  transition: background 0.15s !important;
+}}
+div[data-testid="stDownloadButton"] > button:hover {{
+  background: #15803d !important;
+}}
+
+/* ─── PROGRESS ─── */
+div[data-testid="stProgress"] > div {{
+  background: var(--border) !important;
+  border-radius: 99px !important;
+  height: 6px !important;
+}}
+div[data-testid="stProgress"] > div > div {{
+  background: var(--blue) !important;
+  border-radius: 99px !important;
+}}
+div[data-testid="stProgress"] p {{
+  font-size: 0.72rem !important;
+  color: var(--muted) !important;
+  font-family: 'Barlow', sans-serif !important;
+  font-weight: 500 !important;
+}}
+
+/* ─── STATUS ─── */
+.status {{
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 0.65rem 1rem;
+  border-radius: 8px;
+  border: 1px solid;
+  margin: 0.8rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}}
+.status-ok   {{ border-color: #bbf7d0; color: var(--green); background: var(--green-bg); }}
+.status-warn {{ border-color: #fde68a; color: var(--warn);  background: var(--warn-bg); }}
+.status-err  {{ border-color: #fecaca; color: var(--red);   background: var(--red-bg); }}
+.status-idle {{ border-color: var(--border); color: var(--muted); background: var(--white); }}
+
+/* ─── FOOTER ─── */
+.site-footer {{
+  margin-top: 3.5rem;
+  padding-top: 1.2rem;
+  border-top: 1px solid var(--border);
   display: flex;
   justify-content: space-between;
-  font-size: 10px;
-  font-family: 'Share Tech Mono', 'Courier New', monospace;
-  color: var(--win-darker);
-  margin-top: 16px;
-}
-.statusbar-cell {
-  border-top: 1px solid var(--win-shadow);
-  border-left: 1px solid var(--win-shadow);
-  border-right: 1px solid var(--win-highlight);
-  border-bottom: 1px solid var(--win-highlight);
-  padding: 1px 10px;
-}
+  align-items: center;
+}}
+.footer-name {{
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--ink);
+  letter-spacing: 0.03em;
+}}
+.footer-legal {{
+  font-family: 'Barlow', sans-serif;
+  font-size: 0.65rem;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+}}
 
 /* Spinner */
-div[data-testid="stSpinner"] p {
-  font-family: 'Share Tech Mono', 'Courier New', monospace !important;
-  font-size: 11px !important;
-  color: var(--win-darker) !important;
-}
+div[data-testid="stSpinner"] p {{
+  font-family: 'Barlow', sans-serif !important;
+  font-size: 0.8rem !important;
+  color: var(--muted) !important;
+}}
 </style>
 """, unsafe_allow_html=True)
 
-
-
-# ── FENÊTRE PRINCIPALE ─────────────────────────────────────────────────────────
-st.markdown("""
-<div class="win-window">
-  <div class="win-titlebar">
-    <span>🖥️ Luluflix v1.0 — Watermark Tool</span>
-    <div class="titlebar-btns">
-      <div class="tbtn">_</div>
-      <div class="tbtn">□</div>
-      <div class="tbtn">✕</div>
-    </div>
+# ── HEADER ─────────────────────────────────────────────────────────────────────
+st.markdown(f"""
+<div class="site-header">
+  <div class="header-logo">
+    <img src="{LOGO_URL}" alt="Luluflix" />
   </div>
-  <div class="win-body" style="padding-bottom:4px;">
+  <span class="header-badge">Watermark Tool</span>
+</div>
 """, unsafe_allow_html=True)
 
 # ── HELPERS ────────────────────────────────────────────────────────────────────
@@ -507,10 +486,7 @@ tab_v, tab_p = st.tabs(["📹 Vidéo", "🖼 Photo"])
 # ═══════════════════════════════ VIDÉO ════════════════════════════════════════
 with tab_v:
 
-    st.markdown("""
-    <div class="groupbox">
-      <span class="groupbox-label">Fichier source</span>
-    """, unsafe_allow_html=True)
+    st.markdown('<div class="card"><div class="card-label">Fichier source</div>', unsafe_allow_html=True)
     video_file = st.file_uploader(
         "Déposer la vidéo ici ou cliquer sur Parcourir",
         type=["mp4", "mov", "avi", "mkv", "webm"],
@@ -518,10 +494,7 @@ with tab_v:
     )
     st.markdown('</div>', unsafe_allow_html=True)
 
-    st.markdown("""
-    <div class="groupbox">
-      <span class="groupbox-label">Logo (PNG transparent)</span>
-    """, unsafe_allow_html=True)
+    st.markdown('<div class="card"><div class="card-label">Logo PNG transparent</div>', unsafe_allow_html=True)
     logo_v = st.file_uploader(
         "Déposer le logo ici ou cliquer sur Parcourir",
         type=["png"],
@@ -540,51 +513,61 @@ with tab_v:
         dur_s = f"{int(nfo['duration']//60)}:{int(nfo['duration']%60):02d}"
 
         st.markdown(f"""
-        <div class="groupbox">
-          <span class="groupbox-label">Propriétés</span>
-          <table class="specs-table">
-            <tr><td>Résolution :</td><td>{nfo['width']} x {nfo['height']} px</td></tr>
-            <tr><td>Durée :</td><td>{dur_s}</td></tr>
-            <tr><td>Fréquence :</td><td>{nfo['fps']} fps</td></tr>
-            <tr><td>Largeur logo :</td><td>{int(nfo['width']*0.15)} px (15%)</td></tr>
-          </table>
+        <div class="specs-grid">
+          <div class="spec-item">
+            <span class="spec-key">Largeur</span>
+            <span class="spec-val">{nfo['width']}</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-key">Hauteur</span>
+            <span class="spec-val">{nfo['height']}</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-key">Durée</span>
+            <span class="spec-val">{dur_s}</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-key">FPS</span>
+            <span class="spec-val">{nfo['fps']}</span>
+          </div>
         </div>
         """, unsafe_allow_html=True)
 
         if st.session_state.thumbnail is None:
-            with st.spinner("Calcul de l'aperçu en cours..."):
+            with st.spinner("Génération de l'aperçu…"):
                 st.session_state.thumbnail = make_thumbnail(vp, lp, nfo)
 
         st.markdown("""
-        <div class="groupbox">
-          <span class="groupbox-label">Aperçu</span>
-          <div class="preview-inset">
-            <div class="preview-caption">Aperçu.bmp — première image avec logo</div>
+        <div class="preview-shell">
+          <div class="preview-topbar">
+            <span class="ptag">Aperçu</span>
+            <span class="preview-name">Première image avec logo incrusté</span>
+          </div>
+        </div>
         """, unsafe_allow_html=True)
         st.image(st.session_state.thumbnail, use_container_width=True)
-        st.markdown('</div></div>', unsafe_allow_html=True)
 
         st.markdown("<br>", unsafe_allow_html=True)
 
-        if st.button("OK  Générer le rendu", key="vbtn",
+        if st.button("▶  Générer le rendu", key="vbtn",
                      disabled=bool(st.session_state.rendered_bytes)):
             out = os.path.join(tmp, "video_ready_to_post.mp4")
             ph_p, ph_s = st.empty(), st.empty()
             bar = ph_p.progress(0.0, text="")
-            ph_s.markdown('<div class="status-bar"><div class="status-panel msg-warn">⧖ Encodage en cours, veuillez patienter...</div></div>', unsafe_allow_html=True)
+            ph_s.markdown('<div class="status status-warn">⏳ Encodage en cours, veuillez patienter…</div>', unsafe_allow_html=True)
             try:
                 render_video(vp, lp, out, nfo,
-                             lambda p: bar.progress(p, text=f"Encodage : {int(p*100)}%"))
-                bar.progress(1.0, text="Terminé : 100%")
-                ph_s.markdown('<div class="status-bar"><div class="status-panel msg-ok">✓ Encodage terminé. Fichier prêt au téléchargement.</div></div>', unsafe_allow_html=True)
+                             lambda p: bar.progress(p, text=f"Encodage : {int(p*100)} %"))
+                bar.progress(1.0, text="Terminé : 100 %")
+                ph_s.markdown('<div class="status status-ok">✓ Encodage terminé — fichier prêt.</div>', unsafe_allow_html=True)
                 with open(out, "rb") as f:
                     st.session_state.rendered_bytes = f.read()
             except Exception as e:
-                ph_s.markdown(f'<div class="status-bar"><div class="status-panel msg-err">ERREUR : {e}</div></div>', unsafe_allow_html=True)
+                ph_s.markdown(f'<div class="status status-err">✗ Erreur : {e}</div>', unsafe_allow_html=True)
 
         if st.session_state.rendered_bytes:
             st.download_button(
-                "💾  Enregistrer sous...",
+                "↓  Télécharger la vidéo",
                 data=st.session_state.rendered_bytes,
                 file_name="video_ready_to_post.mp4",
                 mime="video/mp4",
@@ -592,15 +575,13 @@ with tab_v:
             )
 
     else:
-        st.markdown('<div class="status-bar"><div class="status-panel msg-idle">En attente — sélectionner une vidéo et un logo.</div></div>', unsafe_allow_html=True)
+        st.markdown('<div class="status status-idle">Déposez une vidéo et un logo pour commencer.</div>', unsafe_allow_html=True)
+
 
 # ═══════════════════════════════ PHOTO ════════════════════════════════════════
 with tab_p:
 
-    st.markdown("""
-    <div class="groupbox">
-      <span class="groupbox-label">Fichier source</span>
-    """, unsafe_allow_html=True)
+    st.markdown('<div class="card"><div class="card-label">Image source</div>', unsafe_allow_html=True)
     photo_file = st.file_uploader(
         "Déposer l'image ici ou cliquer sur Parcourir",
         type=["png", "jpg", "jpeg"],
@@ -608,10 +589,7 @@ with tab_p:
     )
     st.markdown('</div>', unsafe_allow_html=True)
 
-    st.markdown("""
-    <div class="groupbox">
-      <span class="groupbox-label">Logo (PNG transparent)</span>
-    """, unsafe_allow_html=True)
+    st.markdown('<div class="card"><div class="card-label">Logo PNG transparent</div>', unsafe_allow_html=True)
     logo_p = st.file_uploader(
         "Déposer le logo ici ou cliquer sur Parcourir",
         type=["png"],
@@ -628,26 +606,37 @@ with tab_p:
 
         fmt = (base.format or photo_file.name.rsplit(".", 1)[-1]).upper()
         st.markdown(f"""
-        <div class="groupbox">
-          <span class="groupbox-label">Propriétés</span>
-          <table class="specs-table">
-            <tr><td>Résolution :</td><td>{W} x {H} px</td></tr>
-            <tr><td>Format :</td><td>{fmt}</td></tr>
-            <tr><td>Largeur logo :</td><td>{int(W*0.15)} px (15%)</td></tr>
-          </table>
+        <div class="specs-grid">
+          <div class="spec-item">
+            <span class="spec-key">Largeur</span>
+            <span class="spec-val">{W}</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-key">Hauteur</span>
+            <span class="spec-val">{H}</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-key">Format</span>
+            <span class="spec-val">{fmt}</span>
+          </div>
+          <div class="spec-item">
+            <span class="spec-key">Logo</span>
+            <span class="spec-val">{int(W*0.15)}px</span>
+          </div>
         </div>
         """, unsafe_allow_html=True)
 
         result_img = composite_logo(base, lp2)
 
         st.markdown("""
-        <div class="groupbox">
-          <span class="groupbox-label">Aperçu</span>
-          <div class="preview-inset">
-            <div class="preview-caption">Aperçu.bmp — image avec logo</div>
+        <div class="preview-shell">
+          <div class="preview-topbar">
+            <span class="ptag">Aperçu</span>
+            <span class="preview-name">Image avec logo incrusté</span>
+          </div>
+        </div>
         """, unsafe_allow_html=True)
         st.image(result_img.convert("RGB"), use_container_width=True)
-        st.markdown('</div></div>', unsafe_allow_html=True)
 
         st.markdown("<br>", unsafe_allow_html=True)
 
@@ -660,26 +649,23 @@ with tab_p:
             result_img.convert("RGB").save(buf, format="JPEG", quality=97, subsampling=0)
             fname, mime = "photo_ready_to_post.jpg", "image/jpeg"
 
-        st.markdown('<div class="status-bar"><div class="status-panel msg-ok">✓ Traitement terminé. Prêt à enregistrer.</div></div>', unsafe_allow_html=True)
-        st.markdown("<br>", unsafe_allow_html=True)
+        st.markdown('<div class="status status-ok">✓ Traitement terminé — prêt à télécharger.</div>', unsafe_allow_html=True)
         st.download_button(
-            "💾  Enregistrer sous...",
+            "↓  Télécharger la photo",
             data=buf.getvalue(),
             file_name=fname,
             mime=mime,
             key="pdl"
         )
+
     else:
-        st.markdown('<div class="status-bar"><div class="status-panel msg-idle">En attente — sélectionner une image et un logo.</div></div>', unsafe_allow_html=True)
+        st.markdown('<div class="status status-idle">Déposez une image et un logo pour commencer.</div>', unsafe_allow_html=True)
 
-# ── FERMETURE FENÊTRE ──────────────────────────────────────────────────────────
-st.markdown('</div></div>', unsafe_allow_html=True)
 
-# ── BARRE DE STATUT BAS ────────────────────────────────────────────────────────
+# ── FOOTER ─────────────────────────────────────────────────────────────────────
 st.markdown("""
-<div class="app-statusbar">
-  <div class="statusbar-cell">Lucas Bessonnat</div>
-  <div class="statusbar-cell">Aucune donnée n'est conservée sur un serveur</div>
-  <div class="statusbar-cell">Luluflix v1.0</div>
+<div class="site-footer">
+  <span class="footer-name">Lucas Bessonnat</span>
+  <span class="footer-legal">Aucune donnée n'est conservée sur un serveur</span>
 </div>
 """, unsafe_allow_html=True)

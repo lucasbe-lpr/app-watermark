@@ -114,40 +114,14 @@ div[data-testid="stTabs"] [data-baseweb="tab-border"] {
 
 /* ── UPLOADER ── */
 [data-testid="stFileUploader"] {
-  background: transparent !important;
   margin-bottom: 1.6rem !important;
 }
-[data-testid="stFileUploader"] * {
-  pointer-events: auto !important;
-}
-[data-testid="stFileUploader"] section {
-  background: var(--bg) !important;
-  border: 1px solid var(--border) !important;
-  border-radius: 8px !important;
-  padding: 1.6rem 1.4rem !important;
-  transition: border-color 0.15s, background 0.15s !important;
-  cursor: default !important;
-}
-[data-testid="stFileUploader"] section:hover,
-[data-testid="stFileUploader"] section:focus-within {
-  border-color: var(--blue) !important;
-  background: var(--blue-dim) !important;
-}
-[data-testid="stFileUploaderDropzoneInstructions"] {
-  text-align: center !important;
-}
 [data-testid="stFileUploaderDropzoneInstructions"] * {
-  color: var(--muted) !important;
   font-family: 'Roboto', sans-serif !important;
   font-size: 0.82rem !important;
 }
-[data-testid="stFileUploaderDropzoneInstructions"] span {
-  color: var(--sub) !important;
-  font-weight: 500 !important;
-}
-/* Bouton "Browse files" — pill minimaliste */
-[data-testid="stFileUploader"] button,
-[data-testid="stBaseButton-secondary"] {
+/* Bouton "Browse files" — pill */
+[data-testid="stFileUploader"] button {
   background: var(--white) !important;
   border: 1px solid var(--border-mid) !important;
   color: var(--sub) !important;
@@ -156,34 +130,26 @@ div[data-testid="stTabs"] [data-baseweb="tab-border"] {
   font-weight: 400 !important;
   padding: 0.28rem 0.9rem !important;
   border-radius: 999px !important;
-  transition: all 0.12s !important;
   box-shadow: 0 1px 2px rgba(0,0,0,0.06) !important;
 }
 [data-testid="stFileUploader"] button:hover {
   border-color: var(--blue) !important;
   color: var(--blue) !important;
-  background: var(--white) !important;
 }
-/* Nom du fichier chargé */
 [data-testid="stFileUploaderFileName"] {
   color: var(--ink) !important;
   font-weight: 500 !important;
   font-size: 0.82rem !important;
 }
-/* Croix de suppression — discrète */
-[data-testid="stFileUploaderDeleteBtn"] button,
-button[title="Remove file"] {
+/* Croix suppression */
+[data-testid="stFileUploaderDeleteBtn"] button {
   background: transparent !important;
   border: none !important;
   color: var(--muted) !important;
-  padding: 2px 4px !important;
-  border-radius: 4px !important;
-  font-size: 0.75rem !important;
-  transition: color 0.12s, background 0.12s !important;
   box-shadow: none !important;
+  border-radius: 4px !important;
 }
-[data-testid="stFileUploaderDeleteBtn"] button:hover,
-button[title="Remove file"]:hover {
+[data-testid="stFileUploaderDeleteBtn"] button:hover {
   color: var(--red) !important;
   background: var(--red-bg) !important;
 }

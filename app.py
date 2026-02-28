@@ -21,18 +21,22 @@ st.markdown("""
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&family=Roboto+Condensed:wght@400;500;700&display=swap');
 
 :root {
-  --blue:    #0068B1;
-  --blue-bg: #f0f7fd;
-  --white:   #ffffff;
-  --ink:     #1a1a1a;
-  --muted:   #8a8a8a;
-  --border:  #ebebeb;
-  --green:   #1a7a42;
-  --green-bg:#f2faf5;
-  --warn:    #b45309;
-  --warn-bg: #fffbf0;
-  --red:     #c0392b;
-  --red-bg:  #fdf5f5;
+  --blue:      #0068B1;
+  --blue-dim:  #e8f2fb;
+  --blue-text: #0058a0;
+  --white:     #ffffff;
+  --bg:        #fafafa;
+  --ink:       #111111;
+  --sub:       #555555;
+  --muted:     #999999;
+  --border:    #e4e4e4;
+  --border-mid:#d0d0d0;
+  --green:     #166534;
+  --green-bg:  #f0fdf4;
+  --green-bd:  #bbf7d0;
+  --red:       #991b1b;
+  --red-bg:    #fff1f1;
+  --red-bd:    #fecaca;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -50,7 +54,7 @@ html, body,
 .block-container {
   background: var(--white) !important;
   padding: 0 2rem 5rem !important;
-  max-width: 640px !important;
+  max-width: 600px !important;
 }
 
 #MainMenu, footer, header,
@@ -59,21 +63,18 @@ html, body,
 
 /* ── HEADER ── */
 .site-header {
-  padding: 2.5rem 0 1.8rem;
+  padding: 2rem 0 1.5rem;
   border-bottom: 1px solid var(--border);
-  margin-bottom: 2rem;
+  margin-bottom: 1.8rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
-.site-header img {
-  height: 44px;
-  width: auto;
-  display: block;
-}
+.site-header img { height: 44px; width: auto; display: block; }
 .site-header-right {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   color: var(--muted);
+  font-family: 'Roboto', sans-serif;
   letter-spacing: 0.01em;
 }
 
@@ -82,93 +83,106 @@ div[data-testid="stTabs"] [data-baseweb="tab-list"] {
   background: transparent !important;
   border-bottom: 1px solid var(--border) !important;
   gap: 0 !important;
-  margin-bottom: 2rem !important;
+  margin-bottom: 1.8rem !important;
   padding: 0 !important;
 }
 div[data-testid="stTabs"] [data-baseweb="tab"] {
   background: transparent !important;
   border: none !important;
-  border-bottom: 2px solid transparent !important;
+  border-bottom: 1.5px solid transparent !important;
   margin-bottom: -1px !important;
   color: var(--muted) !important;
-  font-family: 'Roboto Condensed', sans-serif !important;
-  font-size: 0.9rem !important;
-  font-weight: 500 !important;
+  font-family: 'Roboto', sans-serif !important;
+  font-size: 0.85rem !important;
+  font-weight: 400 !important;
   letter-spacing: 0 !important;
   text-transform: none !important;
-  padding: 0.65rem 1.2rem 0.65rem 0 !important;
-  transition: color 0.15s !important;
+  padding: 0.6rem 1.4rem 0.6rem 0 !important;
+  transition: color 0.12s !important;
 }
 div[data-testid="stTabs"] [aria-selected="true"] {
   color: var(--ink) !important;
   font-weight: 500 !important;
-  border-bottom: 2px solid var(--blue) !important;
+  border-bottom: 1.5px solid var(--blue) !important;
 }
-div[data-testid="stTabs"] [data-baseweb="tab"]:hover {
-  color: var(--ink) !important;
-}
+div[data-testid="stTabs"] [data-baseweb="tab"]:hover { color: var(--sub) !important; }
 div[data-testid="stTabs"] [data-baseweb="tab-highlight"],
 div[data-testid="stTabs"] [data-baseweb="tab-border"] {
   display: none !important;
   background: transparent !important;
 }
 
-/* ── SECTION LABEL ── */
-.section-label {
-  font-size: 0.7rem;
-  font-weight: 500;
-  color: var(--muted);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  margin-bottom: 0.6rem;
-}
-
 /* ── UPLOADER ── */
 [data-testid="stFileUploader"] {
   background: transparent !important;
-  margin-bottom: 1.8rem !important;
+  margin-bottom: 1.6rem !important;
 }
 [data-testid="stFileUploader"] section {
-  background: var(--blue-bg) !important;
-  border: 1.5px dashed #b8d4e8 !important;
-  border-radius: 6px !important;
-  padding: 2rem 1.5rem !important;
-  transition: border-color 0.2s, background 0.2s !important;
+  background: var(--bg) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 8px !important;
+  padding: 1.6rem 1.4rem !important;
+  transition: border-color 0.15s, background 0.15s !important;
+  cursor: pointer !important;
 }
 [data-testid="stFileUploader"] section:hover,
 [data-testid="stFileUploader"] section:focus-within {
   border-color: var(--blue) !important;
-  background: #e6f2fb !important;
+  background: var(--blue-dim) !important;
+}
+[data-testid="stFileUploaderDropzoneInstructions"] {
+  text-align: center !important;
 }
 [data-testid="stFileUploaderDropzoneInstructions"] * {
   color: var(--muted) !important;
   font-family: 'Roboto', sans-serif !important;
-  font-size: 0.85rem !important;
+  font-size: 0.82rem !important;
 }
 [data-testid="stFileUploaderDropzoneInstructions"] span {
-  color: var(--ink) !important;
+  color: var(--sub) !important;
   font-weight: 500 !important;
 }
+/* Bouton "Browse files" — pill minimaliste */
 [data-testid="stFileUploader"] button,
 [data-testid="stBaseButton-secondary"] {
   background: var(--white) !important;
-  border: 1px solid var(--blue) !important;
-  color: var(--blue) !important;
+  border: 1px solid var(--border-mid) !important;
+  color: var(--sub) !important;
   font-family: 'Roboto', sans-serif !important;
-  font-size: 0.8rem !important;
-  font-weight: 500 !important;
-  padding: 0.3rem 1rem !important;
-  border-radius: 4px !important;
-  transition: all 0.15s !important;
+  font-size: 0.78rem !important;
+  font-weight: 400 !important;
+  padding: 0.28rem 0.9rem !important;
+  border-radius: 999px !important;
+  transition: all 0.12s !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06) !important;
 }
 [data-testid="stFileUploader"] button:hover {
-  background: var(--blue) !important;
-  color: var(--white) !important;
-}
-[data-testid="stFileUploaderFileName"] {
+  border-color: var(--blue) !important;
   color: var(--blue) !important;
+  background: var(--white) !important;
+}
+/* Nom du fichier chargé */
+[data-testid="stFileUploaderFileName"] {
+  color: var(--ink) !important;
   font-weight: 500 !important;
   font-size: 0.82rem !important;
+}
+/* Croix de suppression — discrète */
+[data-testid="stFileUploaderDeleteBtn"] button,
+button[title="Remove file"] {
+  background: transparent !important;
+  border: none !important;
+  color: var(--muted) !important;
+  padding: 2px 4px !important;
+  border-radius: 4px !important;
+  font-size: 0.75rem !important;
+  transition: color 0.12s, background 0.12s !important;
+  box-shadow: none !important;
+}
+[data-testid="stFileUploaderDeleteBtn"] button:hover,
+button[title="Remove file"]:hover {
+  color: var(--red) !important;
+  background: var(--red-bg) !important;
 }
 
 /* ── SPECS ── */
@@ -176,28 +190,29 @@ div[data-testid="stTabs"] [data-baseweb="tab-border"] {
   display: flex;
   gap: 0;
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: 8px;
   overflow: hidden;
-  margin-bottom: 1.8rem;
+  margin-bottom: 1.6rem;
+  background: var(--bg);
 }
 .spec-cell {
   flex: 1;
-  padding: 0.8rem 1rem;
+  padding: 0.75rem 1rem;
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
+  gap: 0.18rem;
 }
 .spec-cell:last-child { border-right: none; }
 .spec-k {
   font-size: 0.58rem;
   font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.07em;
   color: var(--muted);
 }
 .spec-v {
-  font-size: 1rem;
+  font-size: 0.92rem;
   font-weight: 500;
   color: var(--ink);
   line-height: 1.2;
@@ -206,126 +221,128 @@ div[data-testid="stTabs"] [data-baseweb="tab-border"] {
 /* ── APERÇU ── */
 .preview-wrap {
   border: 1px solid var(--border);
-  border-radius: 6px;
+  border-radius: 8px;
   overflow: hidden;
-  margin-bottom: 1.5rem;
-  background: #f5f5f5;
+  margin-bottom: 1.2rem;
+  background: #f0f0f0;
 }
 .preview-bar {
-  padding: 0.4rem 0.8rem;
+  padding: 0.35rem 0.85rem;
   border-bottom: 1px solid var(--border);
   background: var(--white);
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   color: var(--muted);
   font-weight: 500;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
-/* ── BUTTONS ── */
+/* ── BOUTON PRIMAIRE ── */
 div.stButton > button {
   width: 100% !important;
   background: var(--blue) !important;
   border: none !important;
   color: var(--white) !important;
-  font-family: 'Roboto Condensed', sans-serif !important;
-  font-size: 0.9rem !important;
+  font-family: 'Roboto', sans-serif !important;
+  font-size: 0.85rem !important;
   font-weight: 500 !important;
-  padding: 0.7rem 1.5rem !important;
+  padding: 0.55rem 1.2rem !important;
   border-radius: 6px !important;
-  transition: background 0.15s !important;
-  letter-spacing: 0.02em !important;
+  letter-spacing: 0 !important;
   text-transform: none !important;
+  transition: background 0.12s, box-shadow 0.12s !important;
+  box-shadow: 0 1px 3px rgba(0,104,177,0.25) !important;
 }
-div.stButton > button:hover   { background: #005a99 !important; }
+div.stButton > button:hover {
+  background: #005a99 !important;
+  box-shadow: 0 2px 6px rgba(0,104,177,0.3) !important;
+}
 div.stButton > button:disabled {
   background: var(--border) !important;
   color: var(--muted) !important;
+  box-shadow: none !important;
 }
 
+/* ── BOUTON TÉLÉCHARGER — ghost sobre ── */
 div[data-testid="stDownloadButton"] > button {
   width: 100% !important;
   background: var(--white) !important;
-  border: 1.5px solid var(--blue) !important;
-  color: var(--blue) !important;
-  font-family: 'Roboto Condensed', sans-serif !important;
-  font-size: 0.9rem !important;
-  font-weight: 500 !important;
-  padding: 0.7rem 1.5rem !important;
+  border: 1px solid var(--border-mid) !important;
+  color: var(--ink) !important;
+  font-family: 'Roboto', sans-serif !important;
+  font-size: 0.85rem !important;
+  font-weight: 400 !important;
+  padding: 0.55rem 1.2rem !important;
   border-radius: 6px !important;
-  transition: all 0.15s !important;
-  letter-spacing: 0.02em !important;
+  letter-spacing: 0 !important;
   text-transform: none !important;
+  transition: border-color 0.12s, background 0.12s !important;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
 }
 div[data-testid="stDownloadButton"] > button:hover {
-  background: var(--blue) !important;
-  color: var(--white) !important;
+  border-color: var(--blue) !important;
+  color: var(--blue) !important;
+  background: var(--blue-dim) !important;
 }
 
-/* ── PROGRESS — masqué, remplacé par statut animé ── */
-div[data-testid="stProgress"] {
-  display: none !important;
-}
+/* ── PROGRESS masqué ── */
+div[data-testid="stProgress"] { display: none !important; }
 
 /* ── STATUS ── */
 .status {
-  font-size: 0.8rem;
-  padding: 0.6rem 0.9rem;
+  font-size: 0.78rem;
+  padding: 0.55rem 0.85rem;
   border-radius: 6px;
-  margin: 0.8rem 0;
+  border: 1px solid transparent;
+  margin: 0.75rem 0;
   font-family: 'Roboto', sans-serif;
+  line-height: 1.4;
 }
-.status-ok   { color: var(--green); background: var(--green-bg); }
-.status-warn { color: var(--warn);  background: var(--warn-bg); }
-.status-err  { color: var(--red);   background: var(--red-bg); }
-.status-idle { color: var(--muted); background: var(--white); }
+.status-ok  { color: var(--green); background: var(--green-bg); border-color: var(--green-bd); }
+.status-err { color: var(--red);   background: var(--red-bg);   border-color: var(--red-bd); }
+.status-idle { color: var(--muted); }
 
+/* Dots "en cours" */
 .status-processing {
-  color: var(--blue);
-  background: var(--blue-bg);
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.78rem;
+  color: var(--sub);
   font-family: 'Roboto', sans-serif;
-  font-size: 0.8rem;
-  padding: 0.65rem 0.9rem;
-  border-radius: 6px;
-  margin: 0.8rem 0;
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
+  padding: 0.55rem 0;
+  margin: 0.75rem 0;
 }
-.dot-pulse {
-  display: flex;
-  gap: 4px;
-  align-items: center;
-}
+.dot-pulse { display: flex; gap: 3px; align-items: center; }
 .dot-pulse span {
-  width: 6px; height: 6px;
+  width: 5px; height: 5px;
   border-radius: 50%;
   background: var(--blue);
   display: inline-block;
-  animation: pulse 1.2s ease-in-out infinite;
+  animation: dp 1.2s ease-in-out infinite;
 }
-.dot-pulse span:nth-child(2) { animation-delay: 0.2s; }
-.dot-pulse span:nth-child(3) { animation-delay: 0.4s; }
-@keyframes pulse {
-  0%, 80%, 100% { transform: scale(0.7); opacity: 0.4; }
-  40%           { transform: scale(1);   opacity: 1; }
+.dot-pulse span:nth-child(2) { animation-delay: 0.18s; }
+.dot-pulse span:nth-child(3) { animation-delay: 0.36s; }
+@keyframes dp {
+  0%,80%,100% { transform: scale(0.65); opacity: 0.35; }
+  40%         { transform: scale(1);    opacity: 1; }
 }
 
 /* ── FOOTER ── */
 .site-footer {
   margin-top: 4rem;
-  padding-top: 1.2rem;
+  padding-top: 1rem;
   border-top: 1px solid var(--border);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 0.72rem;
+  font-size: 0.7rem;
   color: var(--muted);
 }
-.footer-name { font-weight: 500; color: var(--ink); }
+.footer-name { color: var(--sub); font-weight: 500; }
 
 div[data-testid="stSpinner"] p {
-  font-size: 0.8rem !important;
+  font-size: 0.78rem !important;
   color: var(--muted) !important;
   font-family: 'Roboto', sans-serif !important;
 }

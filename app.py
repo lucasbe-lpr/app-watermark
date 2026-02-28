@@ -7,7 +7,7 @@ import io
 import urllib.request
 
 st.set_page_config(
-    page_title="luluflix",
+    page_title="Luluflix",
     page_icon="▶",
     layout="centered",
     initial_sidebar_state="collapsed",
@@ -117,13 +117,16 @@ div[data-testid="stTabs"] [data-baseweb="tab-border"] {
   background: transparent !important;
   margin-bottom: 1.6rem !important;
 }
+[data-testid="stFileUploader"] * {
+  pointer-events: auto !important;
+}
 [data-testid="stFileUploader"] section {
   background: var(--bg) !important;
   border: 1px solid var(--border) !important;
   border-radius: 8px !important;
   padding: 1.6rem 1.4rem !important;
   transition: border-color 0.15s, background 0.15s !important;
-  cursor: pointer !important;
+  cursor: default !important;
 }
 [data-testid="stFileUploader"] section:hover,
 [data-testid="stFileUploader"] section:focus-within {
@@ -383,7 +386,7 @@ div[data-testid="stSpinner"] p {
 st.markdown(f"""
 <div class="site-header">
   <img src="{LOGO_URL}" alt="Luluflix" />
-  <span class="site-header-right">watermark tool</span>
+  <span class="site-header-right">Watermark Tool</span>
 </div>
 """, unsafe_allow_html=True)
 
@@ -608,7 +611,7 @@ with tab_p:
 # ── FOOTER ─────────────────────────────────────────────────────────────────────
 st.markdown("""
 <div class="site-footer">
-  <span class="footer-name">© Lucas Bessonnat</span>
-  <span>Aucune donnée n'est conservée sur un serveur.</span>
+  <span class="footer-name">Lucas Bessonnat</span>
+  <span>Aucune donnée n'est conservée sur un serveur</span>
 </div>
 """, unsafe_allow_html=True)

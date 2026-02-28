@@ -15,8 +15,6 @@ st.set_page_config(
 
 LOGO_URL       = "https://github.com/lucasbe-lpr/app-watermark/blob/main/luluflix.png?raw=true"
 DEFAULT_WM_URL = "https://github.com/lucasbe-lpr/app-watermark/blob/main/flavicon.png?raw=true"
-FAVICON_URL    = "https://github.com/lucasbe-lpr/app-watermark/blob/main/flavicon.png?raw=true"
-MAX_SIZE_MB    = 200
 
 st.markdown("""
 <style>
@@ -143,7 +141,6 @@ div[data-testid="stTabs"] [data-baseweb="tab-border"] {
   color: var(--sub) !important;
   font-weight: 500 !important;
 }
-
 [data-testid="stFileUploader"] button {
   background: var(--white) !important;
   border: 1px solid var(--border-mid) !important;
@@ -164,7 +161,6 @@ div[data-testid="stTabs"] [data-baseweb="tab-border"] {
   font-weight: 500 !important;
   font-size: 0.82rem !important;
 }
-/* Croix suppression */
 [data-testid="stFileUploaderDeleteBtn"] button {
   background: transparent !important;
   border: none !important;
@@ -177,49 +173,17 @@ div[data-testid="stTabs"] [data-baseweb="tab-border"] {
   background: var(--red-bg) !important;
 }
 
-/* ── BOUTON RESET (colonne droite) ── */
-div[data-testid="stHorizontalBlock"] div.stButton:last-child > button {
-  background: transparent !important;
-  border: 1px solid var(--border-mid) !important;
-  color: var(--muted) !important;
-  box-shadow: none !important;
-  font-size: 0.78rem !important;
-  font-weight: 400 !important;
-  height: 38px !important;
-}
-div[data-testid="stHorizontalBlock"] div.stButton:last-child > button:hover {
-  border-color: var(--red) !important;
-  color: var(--red) !important;
-  background: var(--red-bg) !important;
-  box-shadow: none !important;
-  transform: none !important;
-}
-.size-hint {
+/* ── SECTION LABEL ── */
+.section-label {
   font-size: 0.7rem;
+  font-weight: 500;
   color: var(--muted);
-  margin-top: 0.35rem;
-  font-family: 'Roboto', sans-serif;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 0.6rem;
 }
 
-/* ── BOUTON RESET — ghost neutre ── */
-div.stButton > button.reset-btn,
-div[data-testid="stButton-reset"] > button {
-  background: transparent !important;
-  border: 1px solid var(--border-mid) !important;
-  color: var(--muted) !important;
-  box-shadow: none !important;
-  font-size: 0.78rem !important;
-  font-weight: 400 !important;
-  height: 32px !important;
-  margin-top: 0.5rem !important;
-}
-div[data-testid="stButton-reset"] > button:hover {
-  border-color: var(--red) !important;
-  color: var(--red) !important;
-  background: var(--red-bg) !important;
-  box-shadow: none !important;
-  transform: none !important;
-}
+/* ── SPECS ── */
 .specs-row {
   display: flex;
   gap: 0;
@@ -271,7 +235,7 @@ div[data-testid="stButton-reset"] > button:hover {
   text-transform: uppercase;
 }
 
-/* ── BOUTON PRINCIPAL (mutable) ── */
+/* ── BOUTON PRINCIPAL ── */
 div.stButton > button {
   width: 100% !important;
   background: var(--blue) !important;
@@ -286,12 +250,12 @@ div.stButton > button {
   letter-spacing: 0 !important;
   text-transform: none !important;
   transition: background 0.15s, box-shadow 0.15s, transform 0.1s !important;
-  box-shadow: 0 1px 2px rgba(0,104,177,0.18), 0 2px 8px rgba(0,104,177,0.12) !important;
+  box-shadow: 0 1px 2px rgba(0,104,177,0.15), 0 2px 6px rgba(0,104,177,0.1) !important;
   cursor: pointer !important;
 }
 div.stButton > button:hover {
   background: #005fa8 !important;
-  box-shadow: 0 2px 4px rgba(0,104,177,0.22), 0 4px 12px rgba(0,104,177,0.16) !important;
+  box-shadow: 0 2px 4px rgba(0,104,177,0.2), 0 4px 10px rgba(0,104,177,0.14) !important;
   transform: translateY(-1px) !important;
 }
 div.stButton > button:active { transform: translateY(0) !important; }
@@ -303,7 +267,7 @@ div.stButton > button:disabled {
   transform: none !important;
 }
 
-/* Bouton vert "Télécharger" après encodage */
+/* Bouton vert "Télécharger" */
 div.stDownloadButton > button,
 div[data-testid="stDownloadButton"] > button {
   width: 100% !important;
@@ -311,7 +275,7 @@ div[data-testid="stDownloadButton"] > button {
   border: none !important;
   color: #fff !important;
   font-family: 'Roboto', sans-serif !important;
-  font-size: 0.88rem !important;
+  font-size: 0.85rem !important;
   font-weight: 500 !important;
   padding: 0 1.4rem !important;
   height: 38px !important;
@@ -319,18 +283,16 @@ div[data-testid="stDownloadButton"] > button {
   letter-spacing: 0 !important;
   text-transform: none !important;
   transition: background 0.15s, box-shadow 0.15s, transform 0.1s !important;
-  box-shadow: 0 1px 2px rgba(22,163,74,0.2), 0 2px 8px rgba(22,163,74,0.12) !important;
+  box-shadow: 0 1px 2px rgba(22,163,74,0.18), 0 2px 6px rgba(22,163,74,0.1) !important;
 }
 div.stDownloadButton > button:hover,
 div[data-testid="stDownloadButton"] > button:hover {
   background: #15803d !important;
   transform: translateY(-1px) !important;
-  box-shadow: 0 2px 4px rgba(22,163,74,0.25), 0 4px 12px rgba(22,163,74,0.15) !important;
+  box-shadow: 0 2px 4px rgba(22,163,74,0.22), 0 4px 10px rgba(22,163,74,0.14) !important;
 }
 div.stDownloadButton > button:active,
-div[data-testid="stDownloadButton"] > button:active {
-  transform: translateY(0) !important;
-}
+div[data-testid="stDownloadButton"] > button:active { transform: translateY(0) !important; }
 
 /* ── PROGRESS natif masqué ── */
 div[data-testid="stProgress"] { display: none !important; }
@@ -358,10 +320,8 @@ div[data-testid="stProgress"] { display: none !important; }
   font-family: 'Roboto', sans-serif;
 }
 
-/* ── FAKE PROGRESS BAR — pur CSS, animée ── */
-.fake-progress-wrap {
-  margin: 0.6rem 0 0.4rem;
-}
+/* ── FAKE PROGRESS BAR ── */
+.fake-progress-wrap { margin: 0.6rem 0 0.4rem; }
 .fake-progress-track {
   height: 3px;
   background: var(--border);
@@ -379,6 +339,7 @@ div[data-testid="stProgress"] { display: none !important; }
   0%   { background-position: 200% center; }
   100% { background-position: -200% center; }
 }
+
 /* ── STATUS ── */
 .status {
   font-size: 0.78rem;
@@ -506,9 +467,6 @@ def render_video(video_path, logo_path, output_path, info, progress_cb=None):
     if process.returncode != 0:
         raise RuntimeError(process.stderr.read())
 
-# ── FAVICON ────────────────────────────────────────────────────────────────────
-st.markdown(f'<link rel="shortcut icon" href="{FAVICON_URL}">', unsafe_allow_html=True)
-
 # ── SESSION STATE ───────────────────────────────────────────────────────────────
 for k in ["thumbnail", "rendered_bytes"]:
     if k not in st.session_state:
@@ -520,87 +478,71 @@ tab_v, tab_p = st.tabs(["Vidéo", "Photo"])
 # ═══════════════════════════════ VIDÉO ════════════════════════════════════════
 with tab_v:
 
-    st.markdown('<p class="section-label">Votre vidéo</p>', unsafe_allow_html=True)
+    st.markdown('<p class="section-label">Source</p>', unsafe_allow_html=True)
     video_file = st.file_uploader(
         "Déposez votre vidéo ici",
         type=["mp4", "mov", "avi", "mkv", "webm"],
         key="vu",
         label_visibility="collapsed"
     )
-    st.markdown(f'<p class="size-hint">Taille max : {MAX_SIZE_MB} Mo · MP4, MOV, AVI, MKV, WEBM</p>', unsafe_allow_html=True)
 
     if video_file:
-        # Vérification taille
-        size_mb = video_file.size / (1024 * 1024)
-        if size_mb > MAX_SIZE_MB:
-            st.markdown(f'<div class="status status-err">Fichier trop lourd ({size_mb:.0f} Mo) — limite : {MAX_SIZE_MB} Mo.</div>', unsafe_allow_html=True)
-        else:
-            lp = get_default_logo()
-            tmp = tempfile.mkdtemp()
-            vp = os.path.join(tmp, "src" + os.path.splitext(video_file.name)[1])
-            with open(vp, "wb") as f: f.write(video_file.read())
+        lp = get_default_logo()
+        tmp = tempfile.mkdtemp()
+        vp = os.path.join(tmp, "src" + os.path.splitext(video_file.name)[1])
+        with open(vp, "wb") as f: f.write(video_file.read())
 
-            nfo = get_video_info(vp)
-            if nfo["width"] == 0:
-                st.markdown('<div class="status status-err">Format non reconnu — essayez un autre fichier.</div>', unsafe_allow_html=True)
-            else:
-                dur_s = f"{int(nfo['duration']//60)}:{int(nfo['duration']%60):02d}"
+        nfo = get_video_info(vp)
+        dur_s = f"{int(nfo['duration']//60)}:{int(nfo['duration']%60):02d}"
 
-                st.markdown(f"""
-                <div class="specs-row">
-                  <div class="spec-cell"><span class="spec-k">Largeur</span><span class="spec-v">{nfo['width']} px</span></div>
-                  <div class="spec-cell"><span class="spec-k">Hauteur</span><span class="spec-v">{nfo['height']} px</span></div>
-                  <div class="spec-cell"><span class="spec-k">Durée</span><span class="spec-v">{dur_s}</span></div>
-                  <div class="spec-cell"><span class="spec-k">FPS</span><span class="spec-v">{nfo['fps']}</span></div>
+        st.markdown(f"""
+        <div class="specs-row">
+          <div class="spec-cell"><span class="spec-k">Largeur</span><span class="spec-v">{nfo['width']} px</span></div>
+          <div class="spec-cell"><span class="spec-k">Hauteur</span><span class="spec-v">{nfo['height']} px</span></div>
+          <div class="spec-cell"><span class="spec-k">Durée</span><span class="spec-v">{dur_s}</span></div>
+          <div class="spec-cell"><span class="spec-k">FPS</span><span class="spec-v">{nfo['fps']}</span></div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        if st.session_state.thumbnail is None:
+            with st.spinner("Génération de l'aperçu…"):
+                st.session_state.thumbnail = make_thumbnail(vp, lp, nfo)
+
+        st.markdown('<div class="preview-wrap"><div class="preview-bar">Aperçu</div>', unsafe_allow_html=True)
+        st.image(st.session_state.thumbnail, use_container_width=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+
+        if not st.session_state.rendered_bytes:
+            if st.button("Générer le rendu", key="vbtn"):
+                out = os.path.join(tmp, "video_ready_to_post.mp4")
+                ph = st.empty()
+                ph.markdown('''
+                <div class="encoding-wrap">
+                  <div class="encoding-ring"></div>
+                  <span class="encoding-text">Encodage en cours…</span>
                 </div>
-                """, unsafe_allow_html=True)
-
-                if st.session_state.thumbnail is None:
-                    with st.spinner("Génération de l'aperçu…"):
-                        st.session_state.thumbnail = make_thumbnail(vp, lp, nfo)
-
-                st.markdown('<div class="preview-wrap"><div class="preview-bar">Aperçu</div>', unsafe_allow_html=True)
-                st.image(st.session_state.thumbnail, use_container_width=True)
-                st.markdown('</div>', unsafe_allow_html=True)
-
-                if not st.session_state.rendered_bytes:
-                    if st.button("Générer le rendu", key="vbtn"):
-                        out = os.path.join(tmp, "video_ready_to_post.mp4")
-                        ph = st.empty()
-                        ph.markdown('''
-                        <div class="encoding-wrap">
-                          <div class="encoding-ring"></div>
-                          <span class="encoding-text">Encodage en cours…</span>
-                        </div>
-                        <div class="fake-progress-wrap">
-                          <div class="fake-progress-track">
-                            <div class="fake-progress-bar"></div>
-                          </div>
-                        </div>
-                        ''', unsafe_allow_html=True)
-                        try:
-                            render_video(vp, lp, out, nfo, progress_cb=None)
-                            ph.empty()
-                            with open(out, "rb") as f:
-                                st.session_state.rendered_bytes = f.read()
-                            st.rerun()
-                        except Exception:
-                            ph.markdown('<div class="status status-err">Échec de l\'encodage — vérifiez que le fichier n\'est pas corrompu.</div>', unsafe_allow_html=True)
-                else:
-                    col1, col2 = st.columns([3, 1])
-                    with col1:
-                        st.download_button(
-                            "↓  Télécharger la vidéo",
-                            data=st.session_state.rendered_bytes,
-                            file_name="video_ready_to_post.mp4",
-                            mime="video/mp4",
-                            key="vdl"
-                        )
-                    with col2:
-                        if st.button("Nouveau fichier", key="vreset"):
-                            st.session_state.rendered_bytes = None
-                            st.session_state.thumbnail = None
-                            st.rerun()
+                <div class="fake-progress-wrap">
+                  <div class="fake-progress-track">
+                    <div class="fake-progress-bar"></div>
+                  </div>
+                </div>
+                ''', unsafe_allow_html=True)
+                try:
+                    render_video(vp, lp, out, nfo, progress_cb=None)
+                    ph.empty()
+                    with open(out, "rb") as f:
+                        st.session_state.rendered_bytes = f.read()
+                    st.rerun()
+                except Exception as e:
+                    ph.markdown(f'<div class="status status-err">Erreur : {e}</div>', unsafe_allow_html=True)
+        else:
+            st.download_button(
+                "↓  Télécharger la vidéo",
+                data=st.session_state.rendered_bytes,
+                file_name="video_ready_to_post.mp4",
+                mime="video/mp4",
+                key="vdl"
+            )
     else:
         st.markdown('<div class="status status-idle">Déposez une vidéo pour commencer.</div>', unsafe_allow_html=True)
 
@@ -608,56 +550,52 @@ with tab_v:
 # ═══════════════════════════════ PHOTO ════════════════════════════════════════
 with tab_p:
 
-    st.markdown('<p class="section-label">Votre photo</p>', unsafe_allow_html=True)
+    st.markdown('<p class="section-label">Source</p>', unsafe_allow_html=True)
     photo_file = st.file_uploader(
         "Déposez votre image ici",
         type=["png", "jpg", "jpeg"],
         key="pu",
         label_visibility="collapsed"
     )
-    st.markdown('<p class="size-hint">Taille max : 200 Mo · PNG, JPG, JPEG</p>', unsafe_allow_html=True)
 
     if photo_file:
-        size_mb = photo_file.size / (1024 * 1024)
-        if size_mb > MAX_SIZE_MB:
-            st.markdown(f'<div class="status status-err">Fichier trop lourd ({size_mb:.0f} Mo) — limite : {MAX_SIZE_MB} Mo.</div>', unsafe_allow_html=True)
+        lp2 = get_default_logo()
+        base = Image.open(photo_file)
+        W, H = base.size
+        fmt = (base.format or photo_file.name.rsplit(".", 1)[-1]).upper()
+
+        st.markdown(f"""
+        <div class="specs-row">
+          <div class="spec-cell"><span class="spec-k">Largeur</span><span class="spec-v">{W} px</span></div>
+          <div class="spec-cell"><span class="spec-k">Hauteur</span><span class="spec-v">{H} px</span></div>
+          <div class="spec-cell"><span class="spec-k">Format</span><span class="spec-v">{fmt}</span></div>
+          <div class="spec-cell"><span class="spec-k">Logo</span><span class="spec-v">{int(W*0.15)} px</span></div>
+        </div>
+        """, unsafe_allow_html=True)
+
+        result_img = composite_logo(base, lp2)
+
+        st.markdown('<div class="preview-wrap"><div class="preview-bar">Aperçu</div>', unsafe_allow_html=True)
+        st.image(result_img.convert("RGB"), use_container_width=True)
+        st.markdown('</div>', unsafe_allow_html=True)
+
+        buf = io.BytesIO()
+        ext = photo_file.name.rsplit(".", 1)[-1].lower()
+        if ext == "png":
+            result_img.save(buf, format="PNG")
+            fname, mime = "photo_ready_to_post.png", "image/png"
         else:
-            lp2 = get_default_logo()
-            base = Image.open(photo_file)
-            W, H = base.size
-            fmt = (base.format or photo_file.name.rsplit(".", 1)[-1]).upper()
+            result_img.convert("RGB").save(buf, format="JPEG", quality=97, subsampling=0)
+            fname, mime = "photo_ready_to_post.jpg", "image/jpeg"
 
-            st.markdown(f"""
-            <div class="specs-row">
-              <div class="spec-cell"><span class="spec-k">Largeur</span><span class="spec-v">{W} px</span></div>
-              <div class="spec-cell"><span class="spec-k">Hauteur</span><span class="spec-v">{H} px</span></div>
-              <div class="spec-cell"><span class="spec-k">Format</span><span class="spec-v">{fmt}</span></div>
-              <div class="spec-cell"><span class="spec-k">Logo</span><span class="spec-v">{int(W*0.15)} px</span></div>
-            </div>
-            """, unsafe_allow_html=True)
-
-            result_img = composite_logo(base, lp2)
-
-            st.markdown('<div class="preview-wrap"><div class="preview-bar">Aperçu</div>', unsafe_allow_html=True)
-            st.image(result_img.convert("RGB"), use_container_width=True)
-            st.markdown('</div>', unsafe_allow_html=True)
-
-            buf = io.BytesIO()
-            ext = photo_file.name.rsplit(".", 1)[-1].lower()
-            if ext == "png":
-                result_img.save(buf, format="PNG")
-                fname, mime = "photo_ready_to_post.png", "image/png"
-            else:
-                result_img.convert("RGB").save(buf, format="JPEG", quality=97, subsampling=0)
-                fname, mime = "photo_ready_to_post.jpg", "image/jpeg"
-
-            st.download_button(
-                "↓  Télécharger la photo",
-                data=buf.getvalue(),
-                file_name=fname,
-                mime=mime,
-                key="pdl"
-            )
+        st.markdown('<div class="status status-ok">✓ Prêt à télécharger.</div>', unsafe_allow_html=True)
+        st.download_button(
+            "↓  Télécharger la photo",
+            data=buf.getvalue(),
+            file_name=fname,
+            mime=mime,
+            key="pdl"
+        )
     else:
         st.markdown('<div class="status status-idle">Déposez une image pour commencer.</div>', unsafe_allow_html=True)
 

@@ -237,96 +237,165 @@ button[title="Remove file"]:hover {
   text-transform: uppercase;
 }
 
-/* ── BOUTON PRIMAIRE ── */
+/* ── BOUTON PRINCIPAL (mutable) ── */
 div.stButton > button {
   width: 100% !important;
   background: var(--blue) !important;
   border: none !important;
   color: var(--white) !important;
   font-family: 'Roboto', sans-serif !important;
-  font-size: 0.85rem !important;
+  font-size: 0.88rem !important;
   font-weight: 500 !important;
-  padding: 0.55rem 1.2rem !important;
-  border-radius: 6px !important;
+  padding: 0 1.4rem !important;
+  height: 40px !important;
+  border-radius: 8px !important;
   letter-spacing: 0 !important;
   text-transform: none !important;
-  transition: background 0.12s, box-shadow 0.12s !important;
-  box-shadow: 0 1px 3px rgba(0,104,177,0.25) !important;
+  transition: background 0.15s, box-shadow 0.15s, transform 0.1s !important;
+  box-shadow: 0 1px 2px rgba(0,104,177,0.18), 0 2px 8px rgba(0,104,177,0.12) !important;
+  cursor: pointer !important;
 }
 div.stButton > button:hover {
-  background: #005a99 !important;
-  box-shadow: 0 2px 6px rgba(0,104,177,0.3) !important;
+  background: #005fa8 !important;
+  box-shadow: 0 2px 4px rgba(0,104,177,0.22), 0 4px 12px rgba(0,104,177,0.16) !important;
+  transform: translateY(-1px) !important;
 }
+div.stButton > button:active { transform: translateY(0) !important; }
 div.stButton > button:disabled {
   background: var(--border) !important;
   color: var(--muted) !important;
   box-shadow: none !important;
+  cursor: default !important;
+  transform: none !important;
 }
 
-/* ── BOUTON TÉLÉCHARGER — ghost sobre ── */
+/* Bouton vert "Télécharger" après encodage */
+div.stDownloadButton > button,
 div[data-testid="stDownloadButton"] > button {
   width: 100% !important;
-  background: var(--white) !important;
-  border: 1px solid var(--border-mid) !important;
-  color: var(--ink) !important;
+  background: #16a34a !important;
+  border: none !important;
+  color: #fff !important;
   font-family: 'Roboto', sans-serif !important;
-  font-size: 0.85rem !important;
-  font-weight: 400 !important;
-  padding: 0.55rem 1.2rem !important;
-  border-radius: 6px !important;
+  font-size: 0.88rem !important;
+  font-weight: 500 !important;
+  padding: 0 1.4rem !important;
+  height: 40px !important;
+  border-radius: 8px !important;
   letter-spacing: 0 !important;
   text-transform: none !important;
-  transition: border-color 0.12s, background 0.12s !important;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.05) !important;
+  transition: background 0.15s, box-shadow 0.15s, transform 0.1s !important;
+  box-shadow: 0 1px 2px rgba(22,163,74,0.2), 0 2px 8px rgba(22,163,74,0.12) !important;
 }
+div.stDownloadButton > button:hover,
 div[data-testid="stDownloadButton"] > button:hover {
-  border-color: var(--blue) !important;
-  color: var(--blue) !important;
-  background: var(--blue-dim) !important;
+  background: #15803d !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 4px rgba(22,163,74,0.25), 0 4px 12px rgba(22,163,74,0.15) !important;
+}
+div.stDownloadButton > button:active,
+div[data-testid="stDownloadButton"] > button:active {
+  transform: translateY(0) !important;
 }
 
-/* ── PROGRESS masqué ── */
-div[data-testid="stProgress"] { display: none !important; }
+/* ── BARRE DE PROGRESSION ENCODAGE ── */
+div[data-testid="stProgress"] { display: block !important; }
+div[data-testid="stProgress"] > div {
+  background: var(--border) !important;
+  border-radius: 99px !important;
+  height: 3px !important;
+  overflow: hidden !important;
+  position: relative !important;
+}
+div[data-testid="stProgress"] > div > div {
+  background: var(--blue) !important;
+  border-radius: 99px !important;
+  height: 100% !important;
+  position: relative !important;
+  transition: width 0.3s ease !important;
+}
+div[data-testid="stProgress"] > div > div::after {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.45) 50%, transparent 100%) !important;
+  animation: shimmer 1.4s infinite !important;
+}
+@keyframes shimmer {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+div[data-testid="stProgress"] p {
+  font-family: 'Roboto', sans-serif !important;
+  font-size: 0.72rem !important;
+  color: var(--muted) !important;
+  margin-top: 0.35rem !important;
+  letter-spacing: 0 !important;
+}
+
+/* ── BARRE UPLOAD (uploader natif) ── */
+[data-testid="stFileUploader"] [role="progressbar"],
+[data-testid="stFileUploader"] progress {
+  height: 3px !important;
+  border-radius: 99px !important;
+  background: var(--border) !important;
+  border: none !important;
+  overflow: hidden !important;
+}
+[data-testid="stFileUploader"] [role="progressbar"]::before,
+[data-testid="stFileUploader"] progress::-webkit-progress-bar {
+  background: var(--border) !important;
+}
+[data-testid="stFileUploader"] [role="progressbar"]::after,
+[data-testid="stFileUploader"] progress::-webkit-progress-value {
+  background: var(--blue) !important;
+  border-radius: 99px !important;
+}
+/* Barre de chargement Streamlit interne à l'uploader */
+[data-testid="stFileUploader"] div[class*="ProgressBar"],
+[data-testid="stFileUploader"] div[class*="progress"] {
+  height: 3px !important;
+  border-radius: 99px !important;
+  background: var(--border) !important;
+}
+[data-testid="stFileUploader"] div[class*="ProgressBar"] > div,
+[data-testid="stFileUploader"] div[class*="progress"] > div {
+  background: var(--blue) !important;
+  border-radius: 99px !important;
+  height: 100% !important;
+}
+/* Barre indéterminée (shimmer) pendant l'upload */
+[data-testid="stFileUploaderProgressBar"],
+[data-testid="stUploadProgressBar"] {
+  height: 3px !important;
+  border-radius: 99px !important;
+  overflow: hidden !important;
+  background: var(--border) !important;
+}
+[data-testid="stFileUploaderProgressBar"] > div,
+[data-testid="stUploadProgressBar"] > div {
+  background: linear-gradient(90deg, var(--blue-dim) 0%, var(--blue) 50%, var(--blue-dim) 100%) !important;
+  background-size: 200% !important;
+  border-radius: 99px !important;
+  animation: shimmer-upload 1.2s linear infinite !important;
+}
+@keyframes shimmer-upload {
+  0%   { background-position: 200% center; }
+  100% { background-position: -200% center; }
+}
 
 /* ── STATUS ── */
 .status {
   font-size: 0.78rem;
-  padding: 0.55rem 0.85rem;
-  border-radius: 6px;
-  border: 1px solid transparent;
-  margin: 0.75rem 0;
+  padding: 0.5rem 0;
+  margin: 0.6rem 0;
   font-family: 'Roboto', sans-serif;
+  color: var(--muted);
   line-height: 1.4;
 }
-.status-ok  { color: var(--green); background: var(--green-bg); border-color: var(--green-bd); }
-.status-err { color: var(--red);   background: var(--red-bg);   border-color: var(--red-bd); }
+.status-ok  { color: var(--green); }
+.status-err { color: var(--red); }
 .status-idle { color: var(--muted); }
-
-/* Dots "en cours" */
-.status-processing {
-  display: flex;
-  align-items: center;
-  gap: 0.55rem;
-  font-size: 0.78rem;
-  color: var(--sub);
-  font-family: 'Roboto', sans-serif;
-  padding: 0.55rem 0;
-  margin: 0.75rem 0;
-}
-.dot-pulse { display: flex; gap: 3px; align-items: center; }
-.dot-pulse span {
-  width: 5px; height: 5px;
-  border-radius: 50%;
-  background: var(--blue);
-  display: inline-block;
-  animation: dp 1.2s ease-in-out infinite;
-}
-.dot-pulse span:nth-child(2) { animation-delay: 0.18s; }
-.dot-pulse span:nth-child(3) { animation-delay: 0.36s; }
-@keyframes dp {
-  0%,80%,100% { transform: scale(0.65); opacity: 0.35; }
-  40%         { transform: scale(1);    opacity: 1; }
-}
 
 /* ── FOOTER ── */
 .site-footer {
@@ -487,22 +556,22 @@ with tab_v:
         st.image(st.session_state.thumbnail, use_container_width=True)
         st.markdown('</div>', unsafe_allow_html=True)
 
-        if st.button("Générer le rendu", key="vbtn",
-                     disabled=bool(st.session_state.rendered_bytes)):
-            out = os.path.join(tmp, "video_ready_to_post.mp4")
-            ph_s = st.empty()
-            ph_s.markdown('<div class="status-processing"><div class="dot-pulse"><span></span><span></span><span></span></div>Encodage en cours…</div>', unsafe_allow_html=True)
-            try:
-                render_video(vp, lp, out, nfo, progress_cb=None)
-                ph_s.markdown('<div class="status status-ok">✓ Terminé — fichier prêt.</div>', unsafe_allow_html=True)
-                with open(out, "rb") as f:
-                    st.session_state.rendered_bytes = f.read()
-            except Exception as e:
-                ph_s.markdown(f'<div class="status status-err">Erreur : {e}</div>', unsafe_allow_html=True)
-
-        if st.session_state.rendered_bytes:
+        if not st.session_state.rendered_bytes:
+            if st.button("Générer le rendu", key="vbtn"):
+                out = os.path.join(tmp, "video_ready_to_post.mp4")
+                bar = st.progress(0.0, text="Encodage en cours…")
+                try:
+                    render_video(vp, lp, out, nfo,
+                                 lambda p: bar.progress(p, text=f"Encodage — {int(p*100)} %"))
+                    bar.progress(1.0, text="Terminé")
+                    with open(out, "rb") as f:
+                        st.session_state.rendered_bytes = f.read()
+                    st.rerun()
+                except Exception as e:
+                    st.markdown(f'<div class="status status-err">Erreur : {e}</div>', unsafe_allow_html=True)
+        else:
             st.download_button(
-                "Télécharger la vidéo",
+                "↓  Télécharger la vidéo",
                 data=st.session_state.rendered_bytes,
                 file_name="video_ready_to_post.mp4",
                 mime="video/mp4",

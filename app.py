@@ -141,39 +141,7 @@ div[data-testid="stTabs"] [data-baseweb="tab-border"] {
   color: var(--sub) !important;
   font-weight: 500 !important;
 }
-/* Texte natif masqué — remplacé par CSS */
-[data-testid="stFileUploaderDropzoneInstructions"] > div > span {
-  visibility: hidden !important;
-  font-size: 0 !important;
-}
-[data-testid="stFileUploaderDropzoneInstructions"] > div > span::before {
-  content: "Ajouter un fichier" !important;
-  visibility: visible !important;
-  font-size: 0.85rem !important;
-  font-weight: 500 !important;
-  color: var(--sub) !important;
-  font-family: 'Roboto', sans-serif !important;
-}
-[data-testid="stFileUploaderDropzoneInstructions"] > div > small {
-  visibility: hidden !important;
-  font-size: 0 !important;
-}
-/* Bouton "Browse files" renommé via CSS */
-[data-testid="stFileUploader"] button > p {
-  visibility: hidden !important;
-  font-size: 0 !important;
-  position: relative !important;
-}
-[data-testid="stFileUploader"] button > p::before {
-  content: "Parcourir les fichiers" !important;
-  visibility: visible !important;
-  font-size: 0.78rem !important;
-  font-family: 'Roboto', sans-serif !important;
-  position: absolute !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  white-space: nowrap !important;
-}
+/* Texte natif dropzone — géré par JS */
 [data-testid="stFileUploader"] button {
   background: var(--white) !important;
   border: 1px solid var(--border-mid) !important;
@@ -499,41 +467,31 @@ for k in ["thumbnail", "rendered_bytes"]:
     if k not in st.session_state:
         st.session_state[k] = None
 
-# ── FIX DRAG & DROP ────────────────────────────────────────────────────────────
+# ── RENOMMAGE TEXTES UPLOADER ──────────────────────────────────────────────────
 st.markdown("""
 <script>
-(function fixDrop() {
+(function renameUploader() {
   function patch() {
-    document.querySelectorAll('[data-testid="stFileUploader"] section').forEach(function(zone) {
-      if (zone._dropFixed) return;
-      zone._dropFixed = true;
-      zone.style.pointerEvents = 'all';
-      ['dragenter','dragover','dragleave','drop'].forEach(function(evt) {
-        zone.addEventListener(evt, function(e) { e.stopPropagation(); }, false);
-      });
-      zone.addEventListener('dragover', function(e) {
-        e.preventDefault();
-        zone.style.opacity = '0.85';
-      });
-      zone.addEventListener('dragleave', function() {
-        zone.style.opacity = '';
-      });
-      zone.addEventListener('drop', function(e) {
-        e.preventDefault();
-        zone.style.opacity = '';
-        var input = zone.querySelector('input[type="file"]');
-        if (input && e.dataTransfer && e.dataTransfer.files.length) {
-          var dt = new DataTransfer();
-          Array.from(e.dataTransfer.files).forEach(function(f) { dt.items.add(f); });
-          input.files = dt.files;
-          input.dispatchEvent(new Event('change', { bubbles: true }));
-        }
-      });
+    // Renommer tous les spans de texte dans la dropzone
+    document.querySelectorAll('[data-testid="stFileUploaderDropzoneInstructions"] span').forEach(function(el) {
+      if (el.innerText.trim().toLowerCase().includes('drag') ||
+          el.innerText.trim().toLowerCase().includes('drop') ||
+          el.innerText.trim().toLowerCase().includes('file')) {
+        el.innerText = 'Ajouter un fichier';
+      }
+    });
+    // Renommer le bouton Browse files
+    document.querySelectorAll('[data-testid="stFileUploader"] button').forEach(function(btn) {
+      if (btn.innerText.trim().toLowerCase().includes('browse')) {
+        btn.innerText = 'Parcourir les fichiers';
+      }
     });
   }
   var mo = new MutationObserver(patch);
-  mo.observe(document.body, { childList: true, subtree: true });
+  mo.observe(document.body, { childList: true, subtree: true, characterData: true });
   patch();
+  setTimeout(patch, 500);
+  setTimeout(patch, 1500);
 })();
 </script>
 """, unsafe_allow_html=True)

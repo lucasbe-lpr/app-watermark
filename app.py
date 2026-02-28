@@ -141,7 +141,7 @@ div[data-testid="stTabs"] [data-baseweb="tab-border"] {
   color: var(--sub) !important;
   font-weight: 500 !important;
 }
-/* Texte natif dropzone — géré par JS */
+
 [data-testid="stFileUploader"] button {
   background: var(--white) !important;
   border: 1px solid var(--border-mid) !important;
@@ -466,35 +466,6 @@ def render_video(video_path, logo_path, output_path, info, progress_cb=None):
 for k in ["thumbnail", "rendered_bytes"]:
     if k not in st.session_state:
         st.session_state[k] = None
-
-# ── RENOMMAGE TEXTES UPLOADER ──────────────────────────────────────────────────
-st.markdown("""
-<script>
-(function renameUploader() {
-  function patch() {
-    // Renommer tous les spans de texte dans la dropzone
-    document.querySelectorAll('[data-testid="stFileUploaderDropzoneInstructions"] span').forEach(function(el) {
-      if (el.innerText.trim().toLowerCase().includes('drag') ||
-          el.innerText.trim().toLowerCase().includes('drop') ||
-          el.innerText.trim().toLowerCase().includes('file')) {
-        el.innerText = 'Ajouter un fichier';
-      }
-    });
-    // Renommer le bouton Browse files
-    document.querySelectorAll('[data-testid="stFileUploader"] button').forEach(function(btn) {
-      if (btn.innerText.trim().toLowerCase().includes('browse')) {
-        btn.innerText = 'Parcourir les fichiers';
-      }
-    });
-  }
-  var mo = new MutationObserver(patch);
-  mo.observe(document.body, { childList: true, subtree: true, characterData: true });
-  patch();
-  setTimeout(patch, 500);
-  setTimeout(patch, 1500);
-})();
-</script>
-""", unsafe_allow_html=True)
 
 # ── TABS ────────────────────────────────────────────────────────────────────────
 tab_v, tab_p = st.tabs(["Vidéo", "Photo"])

@@ -244,11 +244,11 @@ div.stButton > button {
   border: none !important;
   color: var(--white) !important;
   font-family: 'Roboto', sans-serif !important;
-  font-size: 0.88rem !important;
+  font-size: 0.85rem !important;
   font-weight: 500 !important;
   padding: 0 1.4rem !important;
-  height: 40px !important;
-  border-radius: 8px !important;
+  height: 38px !important;
+  border-radius: 999px !important;
   letter-spacing: 0 !important;
   text-transform: none !important;
   transition: background 0.15s, box-shadow 0.15s, transform 0.1s !important;
@@ -280,8 +280,8 @@ div[data-testid="stDownloadButton"] > button {
   font-size: 0.88rem !important;
   font-weight: 500 !important;
   padding: 0 1.4rem !important;
-  height: 40px !important;
-  border-radius: 8px !important;
+  height: 38px !important;
+  border-radius: 999px !important;
   letter-spacing: 0 !important;
   text-transform: none !important;
   transition: background 0.15s, box-shadow 0.15s, transform 0.1s !important;
@@ -298,97 +298,58 @@ div[data-testid="stDownloadButton"] > button:active {
   transform: translateY(0) !important;
 }
 
-/* ── BARRE DE PROGRESSION ENCODAGE ── */
-div[data-testid="stProgress"] { display: block !important; }
-div[data-testid="stProgress"] > div {
-  background: var(--border) !important;
-  border-radius: 99px !important;
-  height: 3px !important;
-  overflow: hidden !important;
-  position: relative !important;
+/* ── PROGRESS natif masqué ── */
+div[data-testid="stProgress"] { display: none !important; }
+
+/* ── SPINNER ENCODAGE ── */
+.encoding-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.5rem 0;
+  margin: 0.5rem 0;
 }
-div[data-testid="stProgress"] > div > div {
-  background: var(--blue) !important;
-  border-radius: 99px !important;
-  height: 100% !important;
-  position: relative !important;
-  transition: width 0.3s ease !important;
+.encoding-ring {
+  width: 16px; height: 16px;
+  border: 2px solid var(--border);
+  border-top-color: var(--blue);
+  border-radius: 50%;
+  flex-shrink: 0;
+  animation: spin 0.75s linear infinite;
 }
-div[data-testid="stProgress"] > div > div::after {
-  content: '' !important;
-  position: absolute !important;
-  inset: 0 !important;
-  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.45) 50%, transparent 100%) !important;
-  animation: shimmer 1.4s infinite !important;
-}
-@keyframes shimmer {
-  0%   { transform: translateX(-100%); }
-  100% { transform: translateX(200%); }
-}
-div[data-testid="stProgress"] p {
-  font-family: 'Roboto', sans-serif !important;
-  font-size: 0.72rem !important;
-  color: var(--muted) !important;
-  margin-top: 0.35rem !important;
-  letter-spacing: 0 !important;
+@keyframes spin { to { transform: rotate(360deg); } }
+.encoding-text {
+  font-size: 0.8rem;
+  color: var(--sub);
+  font-family: 'Roboto', sans-serif;
 }
 
-/* ── BARRE UPLOAD (uploader natif) ── */
-[data-testid="stFileUploader"] [role="progressbar"],
-[data-testid="stFileUploader"] progress {
-  height: 3px !important;
-  border-radius: 99px !important;
-  background: var(--border) !important;
-  border: none !important;
-  overflow: hidden !important;
+/* ── FAKE PROGRESS BAR — pur CSS, animée ── */
+.fake-progress-wrap {
+  margin: 0.6rem 0 0.4rem;
 }
-[data-testid="stFileUploader"] [role="progressbar"]::before,
-[data-testid="stFileUploader"] progress::-webkit-progress-bar {
-  background: var(--border) !important;
+.fake-progress-track {
+  height: 3px;
+  background: var(--border);
+  border-radius: 99px;
+  overflow: hidden;
 }
-[data-testid="stFileUploader"] [role="progressbar"]::after,
-[data-testid="stFileUploader"] progress::-webkit-progress-value {
-  background: var(--blue) !important;
-  border-radius: 99px !important;
+.fake-progress-bar {
+  height: 100%;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--blue-dim), var(--blue), var(--blue-dim));
+  background-size: 200% 100%;
+  animation: indeterminate 1.4s ease-in-out infinite;
 }
-/* Barre de chargement Streamlit interne à l'uploader */
-[data-testid="stFileUploader"] div[class*="ProgressBar"],
-[data-testid="stFileUploader"] div[class*="progress"] {
-  height: 3px !important;
-  border-radius: 99px !important;
-  background: var(--border) !important;
-}
-[data-testid="stFileUploader"] div[class*="ProgressBar"] > div,
-[data-testid="stFileUploader"] div[class*="progress"] > div {
-  background: var(--blue) !important;
-  border-radius: 99px !important;
-  height: 100% !important;
-}
-/* Barre indéterminée (shimmer) pendant l'upload */
-[data-testid="stFileUploaderProgressBar"],
-[data-testid="stUploadProgressBar"] {
-  height: 3px !important;
-  border-radius: 99px !important;
-  overflow: hidden !important;
-  background: var(--border) !important;
-}
-[data-testid="stFileUploaderProgressBar"] > div,
-[data-testid="stUploadProgressBar"] > div {
-  background: linear-gradient(90deg, var(--blue-dim) 0%, var(--blue) 50%, var(--blue-dim) 100%) !important;
-  background-size: 200% !important;
-  border-radius: 99px !important;
-  animation: shimmer-upload 1.2s linear infinite !important;
-}
-@keyframes shimmer-upload {
+@keyframes indeterminate {
   0%   { background-position: 200% center; }
   100% { background-position: -200% center; }
 }
-
 /* ── STATUS ── */
 .status {
   font-size: 0.78rem;
   padding: 0.5rem 0;
-  margin: 0.6rem 0;
+  margin: 0.5rem 0;
   font-family: 'Roboto', sans-serif;
   color: var(--muted);
   line-height: 1.4;
@@ -559,16 +520,26 @@ with tab_v:
         if not st.session_state.rendered_bytes:
             if st.button("Générer le rendu", key="vbtn"):
                 out = os.path.join(tmp, "video_ready_to_post.mp4")
-                bar = st.progress(0.0, text="Encodage en cours…")
+                ph = st.empty()
+                ph.markdown('''
+                <div class="encoding-wrap">
+                  <div class="encoding-ring"></div>
+                  <span class="encoding-text">Encodage en cours…</span>
+                </div>
+                <div class="fake-progress-wrap">
+                  <div class="fake-progress-track">
+                    <div class="fake-progress-bar"></div>
+                  </div>
+                </div>
+                ''', unsafe_allow_html=True)
                 try:
-                    render_video(vp, lp, out, nfo,
-                                 lambda p: bar.progress(p, text=f"Encodage — {int(p*100)} %"))
-                    bar.progress(1.0, text="Terminé")
+                    render_video(vp, lp, out, nfo, progress_cb=None)
+                    ph.empty()
                     with open(out, "rb") as f:
                         st.session_state.rendered_bytes = f.read()
                     st.rerun()
                 except Exception as e:
-                    st.markdown(f'<div class="status status-err">Erreur : {e}</div>', unsafe_allow_html=True)
+                    ph.markdown(f'<div class="status status-err">Erreur : {e}</div>', unsafe_allow_html=True)
         else:
             st.download_button(
                 "↓  Télécharger la vidéo",

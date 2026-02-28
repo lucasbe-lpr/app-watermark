@@ -4,6 +4,7 @@ import tempfile
 import os
 from PIL import Image
 import io
+import urllib.request
 
 st.set_page_config(
     page_title="Luluflix",
@@ -12,7 +13,8 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-LOGO_URL = "https://github.com/lucasbe-lpr/app-watermark/blob/main/luluflix.png?raw=true"
+LOGO_URL       = "https://github.com/lucasbe-lpr/app-watermark/blob/main/luluflix.png?raw=true"
+DEFAULT_WM_URL = "https://github.com/lucasbe-lpr/app-watermark/blob/main/flavicon.png?raw=true"
 
 st.markdown(f"""
 <style>
@@ -475,6 +477,15 @@ def render_video(video_path, logo_path, output_path, info, progress_cb=None):
     if process.returncode != 0:
         raise RuntimeError(process.stderr.read())
 
+def get_default_logo() -> str:
+    """Télécharge le watermark par défaut et retourne son chemin local."""
+    if "default_logo_path" not in st.session_state:
+        tmp = tempfile.mkdtemp()
+        path = os.path.join(tmp, "default_wm.png")
+        urllib.request.urlretrieve(DEFAULT_WM_URL, path)
+        st.session_state.default_logo_path = path
+    return st.session_state.default_logo_path
+
 # ── SESSION STATE ───────────────────────────────────────────────────────────────
 for k in ["thumbnail", "rendered_bytes"]:
     if k not in st.session_state:
@@ -494,20 +505,25 @@ with tab_v:
     )
     st.markdown('</div>', unsafe_allow_html=True)
 
-    st.markdown('<div class="card"><div class="card-label">Logo PNG transparent</div>', unsafe_allow_html=True)
+    st.markdown('<div class="card"><div class="card-label">Logo PNG transparent <span style="font-weight:400;color:var(--muted);font-size:0.65rem;letter-spacing:0;text-transform:none;">(optionnel — logo Luluflix par défaut)</span></div>', unsafe_allow_html=True)
     logo_v = st.file_uploader(
-        "Déposer le logo ici ou cliquer sur Parcourir",
+        "Déposer un logo personnalisé ou laisser vide",
         type=["png"],
         key="vl"
     )
     st.markdown('</div>', unsafe_allow_html=True)
 
-    if video_file and logo_v:
+    if video_file:
         tmp = tempfile.mkdtemp()
         vp = os.path.join(tmp, "src" + os.path.splitext(video_file.name)[1])
-        lp = os.path.join(tmp, "logo.png")
         with open(vp, "wb") as f: f.write(video_file.read())
-        with open(lp, "wb") as f: f.write(logo_v.read())
+
+        # Logo : custom ou défaut
+        if logo_v:
+            lp = os.path.join(tmp, "logo.png")
+            with open(lp, "wb") as f: f.write(logo_v.read())
+        else:
+            lp = get_default_logo()
 
         nfo = get_video_info(vp)
         dur_s = f"{int(nfo['duration']//60)}:{int(nfo['duration']%60):02d}"
@@ -575,7 +591,7 @@ with tab_v:
             )
 
     else:
-        st.markdown('<div class="status status-idle">Déposez une vidéo et un logo pour commencer.</div>', unsafe_allow_html=True)
+        st.markdown('<div class="status status-idle">Déposez une vidéo pour commencer.</div>', unsafe_allow_html=True)
 
 
 # ═══════════════════════════════ PHOTO ════════════════════════════════════════
@@ -589,20 +605,25 @@ with tab_p:
     )
     st.markdown('</div>', unsafe_allow_html=True)
 
-    st.markdown('<div class="card"><div class="card-label">Logo PNG transparent</div>', unsafe_allow_html=True)
+    st.markdown('<div class="card"><div class="card-label">Logo PNG transparent <span style="font-weight:400;color:var(--muted);font-size:0.65rem;letter-spacing:0;text-transform:none;">(optionnel — logo Luluflix par défaut)</span></div>', unsafe_allow_html=True)
     logo_p = st.file_uploader(
-        "Déposer le logo ici ou cliquer sur Parcourir",
+        "Déposer un logo personnalisé ou laisser vide",
         type=["png"],
         key="pl"
     )
     st.markdown('</div>', unsafe_allow_html=True)
 
-    if photo_file and logo_p:
+    if photo_file:
         base = Image.open(photo_file)
         W, H = base.size
         tmp2 = tempfile.mkdtemp()
-        lp2 = os.path.join(tmp2, "logo.png")
-        with open(lp2, "wb") as f: f.write(logo_p.read())
+
+        # Logo : custom ou défaut
+        if logo_p:
+            lp2 = os.path.join(tmp2, "logo.png")
+            with open(lp2, "wb") as f: f.write(logo_p.read())
+        else:
+            lp2 = get_default_logo()
 
         fmt = (base.format or photo_file.name.rsplit(".", 1)[-1]).upper()
         st.markdown(f"""
@@ -659,7 +680,7 @@ with tab_p:
         )
 
     else:
-        st.markdown('<div class="status status-idle">Déposez une image et un logo pour commencer.</div>', unsafe_allow_html=True)
+        st.markdown('<div class="status status-idle">Déposez une image pour commencer.</div>', unsafe_allow_html=True)
 
 
 # ── FOOTER ─────────────────────────────────────────────────────────────────────

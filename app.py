@@ -114,13 +114,66 @@ div[data-testid="stTabs"] [data-baseweb="tab-border"] {
 
 /* ── UPLOADER ── */
 [data-testid="stFileUploader"] {
+  background: transparent !important;
   margin-bottom: 1.6rem !important;
 }
+[data-testid="stFileUploader"] section {
+  background: var(--bg) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 8px !important;
+  padding: 1.6rem 1.4rem !important;
+  transition: border-color 0.15s, background 0.15s !important;
+}
+[data-testid="stFileUploader"] section:hover,
+[data-testid="stFileUploader"] section:focus-within {
+  border-color: var(--blue) !important;
+  background: var(--blue-dim) !important;
+}
+[data-testid="stFileUploaderDropzoneInstructions"] {
+  text-align: center !important;
+}
 [data-testid="stFileUploaderDropzoneInstructions"] * {
+  color: var(--muted) !important;
   font-family: 'Roboto', sans-serif !important;
   font-size: 0.82rem !important;
 }
-/* Bouton "Browse files" — pill */
+[data-testid="stFileUploaderDropzoneInstructions"] span {
+  color: var(--sub) !important;
+  font-weight: 500 !important;
+}
+/* Texte natif masqué — remplacé par CSS */
+[data-testid="stFileUploaderDropzoneInstructions"] > div > span {
+  visibility: hidden !important;
+  font-size: 0 !important;
+}
+[data-testid="stFileUploaderDropzoneInstructions"] > div > span::before {
+  content: "Ajouter un fichier" !important;
+  visibility: visible !important;
+  font-size: 0.85rem !important;
+  font-weight: 500 !important;
+  color: var(--sub) !important;
+  font-family: 'Roboto', sans-serif !important;
+}
+[data-testid="stFileUploaderDropzoneInstructions"] > div > small {
+  visibility: hidden !important;
+  font-size: 0 !important;
+}
+/* Bouton "Browse files" renommé via CSS */
+[data-testid="stFileUploader"] button > p {
+  visibility: hidden !important;
+  font-size: 0 !important;
+  position: relative !important;
+}
+[data-testid="stFileUploader"] button > p::before {
+  content: "Parcourir les fichiers" !important;
+  visibility: visible !important;
+  font-size: 0.78rem !important;
+  font-family: 'Roboto', sans-serif !important;
+  position: absolute !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  white-space: nowrap !important;
+}
 [data-testid="stFileUploader"] button {
   background: var(--white) !important;
   border: 1px solid var(--border-mid) !important;

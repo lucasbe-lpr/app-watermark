@@ -7,7 +7,7 @@ import io
 import urllib.request
 
 st.set_page_config(
-    page_title="Luluflix",
+    page_title="luluflix",
     page_icon="▶",
     layout="centered",
     initial_sidebar_state="collapsed",
@@ -383,7 +383,7 @@ div[data-testid="stSpinner"] p {
 st.markdown(f"""
 <div class="site-header">
   <img src="{LOGO_URL}" alt="Luluflix" />
-  <span class="site-header-right">Watermark Tool</span>
+  <span class="site-header-right">watermark tool</span>
 </div>
 """, unsafe_allow_html=True)
 
@@ -608,7 +608,7 @@ with tab_p:
 # ── FOOTER ─────────────────────────────────────────────────────────────────────
 st.markdown("""
 <div class="site-footer">
-  <span class="footer-name">Lucas Bessonnat</span>
-  <span>Aucune donnée n'est conservée sur un serveur</span>
+  <span class="footer-name">© Lucas Bessonnat</span>
+  <span>Aucune donnée n'est conservée sur un serveur.</span>
 </div>
 """, unsafe_allow_html=True)

@@ -18,7 +18,7 @@ DEFAULT_WM_URL = "https://github.com/lucasbe-lpr/app-watermark/blob/main/flavico
 
 st.markdown("""
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&family=Roboto+Condensed:wght@400;500;700&display=swap');
 
 :root {
   --blue:    #0068B1;
@@ -43,7 +43,7 @@ html, body,
 .main {
   background: var(--white) !important;
   color: var(--ink) !important;
-  font-family: 'DM Sans', sans-serif !important;
+  font-family: 'Roboto', sans-serif !important;
   font-weight: 400 !important;
 }
 
@@ -67,7 +67,7 @@ html, body,
   justify-content: space-between;
 }
 .site-header img {
-  height: 32px;
+  height: 44px;
   width: auto;
   display: block;
 }
@@ -91,9 +91,9 @@ div[data-testid="stTabs"] [data-baseweb="tab"] {
   border-bottom: 2px solid transparent !important;
   margin-bottom: -1px !important;
   color: var(--muted) !important;
-  font-family: 'DM Sans', sans-serif !important;
-  font-size: 0.85rem !important;
-  font-weight: 400 !important;
+  font-family: 'Roboto Condensed', sans-serif !important;
+  font-size: 0.9rem !important;
+  font-weight: 500 !important;
   letter-spacing: 0 !important;
   text-transform: none !important;
   padding: 0.65rem 1.2rem 0.65rem 0 !important;
@@ -142,7 +142,7 @@ div[data-testid="stTabs"] [data-baseweb="tab-border"] {
 }
 [data-testid="stFileUploaderDropzoneInstructions"] * {
   color: var(--muted) !important;
-  font-family: 'DM Sans', sans-serif !important;
+  font-family: 'Roboto', sans-serif !important;
   font-size: 0.85rem !important;
 }
 [data-testid="stFileUploaderDropzoneInstructions"] span {
@@ -154,7 +154,7 @@ div[data-testid="stTabs"] [data-baseweb="tab-border"] {
   background: var(--white) !important;
   border: 1px solid var(--blue) !important;
   color: var(--blue) !important;
-  font-family: 'DM Sans', sans-serif !important;
+  font-family: 'Roboto', sans-serif !important;
   font-size: 0.8rem !important;
   font-weight: 500 !important;
   padding: 0.3rem 1rem !important;
@@ -228,13 +228,13 @@ div.stButton > button {
   background: var(--blue) !important;
   border: none !important;
   color: var(--white) !important;
-  font-family: 'DM Sans', sans-serif !important;
+  font-family: 'Roboto Condensed', sans-serif !important;
   font-size: 0.9rem !important;
   font-weight: 500 !important;
   padding: 0.7rem 1.5rem !important;
   border-radius: 6px !important;
   transition: background 0.15s !important;
-  letter-spacing: 0 !important;
+  letter-spacing: 0.02em !important;
   text-transform: none !important;
 }
 div.stButton > button:hover   { background: #005a99 !important; }
@@ -248,12 +248,13 @@ div[data-testid="stDownloadButton"] > button {
   background: var(--white) !important;
   border: 1.5px solid var(--blue) !important;
   color: var(--blue) !important;
-  font-family: 'DM Sans', sans-serif !important;
+  font-family: 'Roboto Condensed', sans-serif !important;
   font-size: 0.9rem !important;
   font-weight: 500 !important;
   padding: 0.7rem 1.5rem !important;
   border-radius: 6px !important;
   transition: all 0.15s !important;
+  letter-spacing: 0.02em !important;
   text-transform: none !important;
 }
 div[data-testid="stDownloadButton"] > button:hover {
@@ -261,20 +262,9 @@ div[data-testid="stDownloadButton"] > button:hover {
   color: var(--white) !important;
 }
 
-/* ── PROGRESS ── */
-div[data-testid="stProgress"] > div {
-  background: var(--border) !important;
-  border-radius: 99px !important;
-  height: 4px !important;
-}
-div[data-testid="stProgress"] > div > div {
-  background: var(--blue) !important;
-  border-radius: 99px !important;
-}
-div[data-testid="stProgress"] p {
-  font-size: 0.72rem !important;
-  color: var(--muted) !important;
-  font-family: 'DM Sans', sans-serif !important;
+/* ── PROGRESS — masqué, remplacé par statut animé ── */
+div[data-testid="stProgress"] {
+  display: none !important;
 }
 
 /* ── STATUS ── */
@@ -283,12 +273,43 @@ div[data-testid="stProgress"] p {
   padding: 0.6rem 0.9rem;
   border-radius: 6px;
   margin: 0.8rem 0;
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Roboto', sans-serif;
 }
 .status-ok   { color: var(--green); background: var(--green-bg); }
 .status-warn { color: var(--warn);  background: var(--warn-bg); }
 .status-err  { color: var(--red);   background: var(--red-bg); }
 .status-idle { color: var(--muted); background: var(--white); }
+
+.status-processing {
+  color: var(--blue);
+  background: var(--blue-bg);
+  font-family: 'Roboto', sans-serif;
+  font-size: 0.8rem;
+  padding: 0.65rem 0.9rem;
+  border-radius: 6px;
+  margin: 0.8rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.dot-pulse {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+.dot-pulse span {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--blue);
+  display: inline-block;
+  animation: pulse 1.2s ease-in-out infinite;
+}
+.dot-pulse span:nth-child(2) { animation-delay: 0.2s; }
+.dot-pulse span:nth-child(3) { animation-delay: 0.4s; }
+@keyframes pulse {
+  0%, 80%, 100% { transform: scale(0.7); opacity: 0.4; }
+  40%           { transform: scale(1);   opacity: 1; }
+}
 
 /* ── FOOTER ── */
 .site-footer {
@@ -306,7 +327,7 @@ div[data-testid="stProgress"] p {
 div[data-testid="stSpinner"] p {
   font-size: 0.8rem !important;
   color: var(--muted) !important;
-  font-family: 'DM Sans', sans-serif !important;
+  font-family: 'Roboto', sans-serif !important;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -452,13 +473,10 @@ with tab_v:
         if st.button("Générer le rendu", key="vbtn",
                      disabled=bool(st.session_state.rendered_bytes)):
             out = os.path.join(tmp, "video_ready_to_post.mp4")
-            ph_p, ph_s = st.empty(), st.empty()
-            bar = ph_p.progress(0.0, text="")
-            ph_s.markdown('<div class="status status-warn">Encodage en cours…</div>', unsafe_allow_html=True)
+            ph_s = st.empty()
+            ph_s.markdown('<div class="status-processing"><div class="dot-pulse"><span></span><span></span><span></span></div>Encodage en cours…</div>', unsafe_allow_html=True)
             try:
-                render_video(vp, lp, out, nfo,
-                             lambda p: bar.progress(p, text=f"{int(p*100)} %"))
-                bar.progress(1.0, text="100 %")
+                render_video(vp, lp, out, nfo, progress_cb=None)
                 ph_s.markdown('<div class="status status-ok">✓ Terminé — fichier prêt.</div>', unsafe_allow_html=True)
                 with open(out, "rb") as f:
                     st.session_state.rendered_bytes = f.read()

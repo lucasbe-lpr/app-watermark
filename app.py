@@ -446,6 +446,45 @@ for k in ["thumbnail", "rendered_bytes"]:
     if k not in st.session_state:
         st.session_state[k] = None
 
+# ── FIX DRAG & DROP ────────────────────────────────────────────────────────────
+st.markdown("""
+<script>
+(function fixDrop() {
+  function patch() {
+    document.querySelectorAll('[data-testid="stFileUploader"] section').forEach(function(zone) {
+      if (zone._dropFixed) return;
+      zone._dropFixed = true;
+      zone.style.pointerEvents = 'all';
+      ['dragenter','dragover','dragleave','drop'].forEach(function(evt) {
+        zone.addEventListener(evt, function(e) { e.stopPropagation(); }, false);
+      });
+      zone.addEventListener('dragover', function(e) {
+        e.preventDefault();
+        zone.style.opacity = '0.85';
+      });
+      zone.addEventListener('dragleave', function() {
+        zone.style.opacity = '';
+      });
+      zone.addEventListener('drop', function(e) {
+        e.preventDefault();
+        zone.style.opacity = '';
+        var input = zone.querySelector('input[type="file"]');
+        if (input && e.dataTransfer && e.dataTransfer.files.length) {
+          var dt = new DataTransfer();
+          Array.from(e.dataTransfer.files).forEach(function(f) { dt.items.add(f); });
+          input.files = dt.files;
+          input.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      });
+    });
+  }
+  var mo = new MutationObserver(patch);
+  mo.observe(document.body, { childList: true, subtree: true });
+  patch();
+})();
+</script>
+""", unsafe_allow_html=True)
+
 # ── TABS ────────────────────────────────────────────────────────────────────────
 tab_v, tab_p = st.tabs(["Vidéo", "Photo"])
 

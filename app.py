@@ -6,16 +6,23 @@ from PIL import Image
 import io
 import urllib.request
 
-st.set_page_config(
-    page_title="Luluflix",
-    page_icon="▶",
-    layout="centered",
-    initial_sidebar_state="collapsed",
-)
-
 LOGO_URL       = "https://github.com/lucasbe-lpr/app-watermark/blob/main/luluflix.png?raw=true"
 DEFAULT_WM_URL = "https://github.com/lucasbe-lpr/app-watermark/blob/main/flavicon.png?raw=true"
 FAVICON_URL    = "https://github.com/lucasbe-lpr/app-watermark/blob/main/logo.png?raw=true"
+
+# Télécharge le favicon pour le passer à Streamlit
+try:
+    _fav_data = urllib.request.urlopen(FAVICON_URL).read()
+    _fav_img  = Image.open(io.BytesIO(_fav_data))
+except Exception:
+    _fav_img  = "▶"
+
+st.set_page_config(
+    page_title="Luluflix",
+    page_icon=_fav_img,
+    layout="centered",
+    initial_sidebar_state="collapsed",
+)
 
 st.markdown("""
 <style>
@@ -473,20 +480,6 @@ for k in ["thumbnail", "rendered_bytes"]:
     if k not in st.session_state:
         st.session_state[k] = None
 
-# ── FAVICON ────────────────────────────────────────────────────────────────────
-st.markdown(f"""
-<script>
-(function() {{
-  var existing = document.querySelector("link[rel*='icon']");
-  if (existing) existing.parentNode.removeChild(existing);
-  var link = document.createElement('link');
-  link.rel = 'shortcut icon';
-  link.type = 'image/png';
-  link.href = '{FAVICON_URL}';
-  document.head.appendChild(link);
-}})();
-</script>
-""", unsafe_allow_html=True)
 
 # ── TABS ────────────────────────────────────────────────────────────────────────
 tab_v, tab_p = st.tabs(["Vidéo", "Photo"])

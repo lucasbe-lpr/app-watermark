@@ -15,6 +15,7 @@ st.set_page_config(
 
 LOGO_URL       = "https://github.com/lucasbe-lpr/app-watermark/blob/main/luluflix.png?raw=true"
 DEFAULT_WM_URL = "https://github.com/lucasbe-lpr/app-watermark/blob/main/flavicon.png?raw=true"
+FAVICON_URL    = "https://github.com/lucasbe-lpr/app-watermark/blob/main/logo.png?raw=true"
 
 st.markdown("""
 <style>
@@ -112,49 +113,27 @@ div[data-testid="stTabs"] [data-baseweb="tab-border"] {
   background: transparent !important;
 }
 
-/* ── UPLOADER ── */
+/* ── UPLOADER NATIF — caché, conservé pour la logique ── */
 [data-testid="stFileUploader"] {
-  background: transparent !important;
-  margin-bottom: 1.6rem !important;
+  position: relative !important;
+  margin-bottom: 0 !important;
 }
 [data-testid="stFileUploader"] section {
-  background: var(--bg) !important;
-  border: 1px solid var(--border) !important;
-  border-radius: 8px !important;
-  padding: 1.6rem 1.4rem !important;
-  transition: border-color 0.15s, background 0.15s !important;
+  position: absolute !important;
+  width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
 }
-[data-testid="stFileUploader"] section:hover,
-[data-testid="stFileUploader"] section:focus-within {
-  border-color: var(--blue) !important;
-  background: var(--blue-dim) !important;
-}
-[data-testid="stFileUploaderDropzoneInstructions"] {
-  text-align: center !important;
-}
-[data-testid="stFileUploaderDropzoneInstructions"] * {
-  color: var(--muted) !important;
-  font-family: 'Roboto', sans-serif !important;
-  font-size: 0.82rem !important;
-}
-[data-testid="stFileUploaderDropzoneInstructions"] span {
+/* Fichier chargé — on affiche juste le nom et la croix */
+[data-testid="stFileUploader"] > div > div {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  padding: 0.5rem 0 0.2rem !important;
+  font-size: 0.8rem !important;
   color: var(--sub) !important;
-  font-weight: 500 !important;
-}
-[data-testid="stFileUploader"] button {
-  background: var(--white) !important;
-  border: 1px solid var(--border-mid) !important;
-  color: var(--sub) !important;
-  font-family: 'Roboto', sans-serif !important;
-  font-size: 0.78rem !important;
-  font-weight: 400 !important;
-  padding: 0.28rem 0.9rem !important;
-  border-radius: 999px !important;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.06) !important;
-}
-[data-testid="stFileUploader"] button:hover {
-  border-color: var(--blue) !important;
-  color: var(--blue) !important;
 }
 [data-testid="stFileUploaderFileName"] {
   color: var(--ink) !important;
@@ -166,11 +145,77 @@ div[data-testid="stTabs"] [data-baseweb="tab-border"] {
   border: none !important;
   color: var(--muted) !important;
   box-shadow: none !important;
+  padding: 0 4px !important;
   border-radius: 4px !important;
+  transition: color 0.12s !important;
 }
 [data-testid="stFileUploaderDeleteBtn"] button:hover {
   color: var(--red) !important;
   background: var(--red-bg) !important;
+}
+
+/* ── CUSTOM DROPZONE ── */
+.dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  border: 1.5px dashed var(--border-mid);
+  border-radius: 10px;
+  padding: 2.2rem 1.5rem;
+  background: var(--bg);
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+  margin-bottom: 0.4rem;
+  user-select: none;
+}
+.dropzone:hover, .dropzone.drag-over {
+  border-color: var(--blue);
+  background: var(--blue-dim);
+}
+.dropzone-icon {
+  width: 36px; height: 36px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  color: var(--muted);
+}
+.dropzone-icon svg { width: 18px; height: 18px; }
+.dropzone-text {
+  text-align: center;
+  line-height: 1.5;
+}
+.dropzone-text-main {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--sub);
+  display: block;
+}
+.dropzone-text-sub {
+  font-size: 0.75rem;
+  color: var(--muted);
+  display: block;
+  margin-top: 0.15rem;
+}
+.dropzone-btn {
+  background: var(--white);
+  border: 1px solid var(--border-mid);
+  color: var(--sub);
+  font-family: 'Roboto', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 400;
+  padding: 0.3rem 1rem;
+  border-radius: 999px;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+  transition: border-color 0.12s, color 0.12s;
+}
+.dropzone-btn:hover {
+  border-color: var(--blue);
+  color: var(--blue);
 }
 
 /* ── SECTION LABEL ── */
@@ -472,6 +517,60 @@ for k in ["thumbnail", "rendered_bytes"]:
     if k not in st.session_state:
         st.session_state[k] = None
 
+# ── FAVICON ────────────────────────────────────────────────────────────────────
+st.markdown(f'<link rel="shortcut icon" href="{FAVICON_URL}">', unsafe_allow_html=True)
+
+# ── DROPZONE JS ────────────────────────────────────────────────────────────────
+st.markdown("""
+<script>
+(function() {
+  function setupDropzone(zone) {
+    if (zone._ready) return;
+    zone._ready = true;
+
+    // Trouve l'input file caché dans l'uploader Streamlit voisin
+    function getInput() {
+      var parent = zone.closest('[data-testid="stVerticalBlock"]') ||
+                   zone.parentElement.parentElement;
+      return parent ? parent.querySelector('input[type="file"]') : null;
+    }
+
+    // Clic sur la zone ou le bouton → ouvre le sélecteur natif
+    zone.addEventListener('click', function(e) {
+      var inp = getInput();
+      if (inp) inp.click();
+    });
+
+    // Drag & drop
+    zone.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      zone.classList.add('drag-over');
+    });
+    zone.addEventListener('dragleave', function() {
+      zone.classList.remove('drag-over');
+    });
+    zone.addEventListener('drop', function(e) {
+      e.preventDefault();
+      zone.classList.remove('drag-over');
+      var inp = getInput();
+      if (!inp || !e.dataTransfer.files.length) return;
+      var dt = new DataTransfer();
+      Array.from(e.dataTransfer.files).forEach(function(f) { dt.items.add(f); });
+      inp.files = dt.files;
+      inp.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+  }
+
+  function init() {
+    document.querySelectorAll('.dropzone').forEach(setupDropzone);
+  }
+
+  new MutationObserver(init).observe(document.body, { childList: true, subtree: true });
+  init();
+})();
+</script>
+""", unsafe_allow_html=True)
+
 # ── TABS ────────────────────────────────────────────────────────────────────────
 tab_v, tab_p = st.tabs(["Vidéo", "Photo"])
 
@@ -479,8 +578,22 @@ tab_v, tab_p = st.tabs(["Vidéo", "Photo"])
 with tab_v:
 
     st.markdown('<p class="section-label">Source</p>', unsafe_allow_html=True)
+    st.markdown("""
+    <div class="dropzone" id="dz-video">
+      <div class="dropzone-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+        </svg>
+      </div>
+      <div class="dropzone-text">
+        <span class="dropzone-text-main">Déposez votre vidéo ici</span>
+        <span class="dropzone-text-sub">MP4, MOV, AVI, MKV, WEBM · 200 Mo max</span>
+      </div>
+      <button class="dropzone-btn" onclick="event.stopPropagation()">Parcourir les fichiers</button>
+    </div>
+    """, unsafe_allow_html=True)
     video_file = st.file_uploader(
-        "Déposez votre vidéo ici",
+        "video",
         type=["mp4", "mov", "avi", "mkv", "webm"],
         key="vu",
         label_visibility="collapsed"
@@ -551,8 +664,22 @@ with tab_v:
 with tab_p:
 
     st.markdown('<p class="section-label">Source</p>', unsafe_allow_html=True)
+    st.markdown("""
+    <div class="dropzone" id="dz-photo">
+      <div class="dropzone-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5" />
+        </svg>
+      </div>
+      <div class="dropzone-text">
+        <span class="dropzone-text-main">Déposez votre image ici</span>
+        <span class="dropzone-text-sub">PNG, JPG, JPEG · 200 Mo max</span>
+      </div>
+      <button class="dropzone-btn" onclick="event.stopPropagation()">Parcourir les fichiers</button>
+    </div>
+    """, unsafe_allow_html=True)
     photo_file = st.file_uploader(
-        "Déposez votre image ici",
+        "photo",
         type=["png", "jpg", "jpeg"],
         key="pu",
         label_visibility="collapsed"

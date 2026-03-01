@@ -205,15 +205,13 @@ div[data-testid="stSlider"] [role="slider"]:focus {
   box-shadow: 0 0 0 3px var(--blue-dim), 0 1px 3px rgba(0,0,0,0.12) !important;
   outline: none !important;
 }
-/* Valeur affichée au-dessus du thumb */
+/* Masquer les tick marks et les valeurs min/max */
 div[data-testid="stSlider"] [data-testid="stTickBarMin"],
-div[data-testid="stSlider"] [data-testid="stTickBarMax"] {
+div[data-testid="stSlider"] [data-testid="stTickBarMax"],
+div[data-testid="stSlider"] [data-baseweb="tick-bar"],
+div[data-testid="stSlider"] span[style*="left: 0%"],
+div[data-testid="stSlider"] span[style*="left: 100%"] {
   display: none !important;
-}
-div[data-testid="stSlider"] div[style*="position: absolute"] p {
-  font-size: 0.7rem !important;
-  color: var(--muted) !important;
-  font-family: 'Roboto', sans-serif !important;
 }
 
 div.stButton > button {

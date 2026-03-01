@@ -1,104 +1,97 @@
-# 🖥️ Luluflix v1.0 — Watermark Tool
+<p align="center">
+  <img src="https://github.com/lucasbe-lpr/app-watermark/blob/main/luluflix.png?raw=true" height="52" alt="Luluflix" />
+</p>
 
-Outil d'incrustation de logo pour vidéos et photos, prêt à déployer gratuitement sur Streamlit Cloud.
+<h1 align="center">Watermark Tool</h1>
 
----
+<p align="center">
+  Outil interne pour incruster le logo Luluflix sur vos vidéos et photos,<br/>
+  extraire une capture d'écran ou découper un segment vidéo.<br/>
+  <strong>Aucune donnée n'est conservée sur un serveur.</strong>
+</p>
 
-## Ce que ça fait
-
-- Incruste un logo PNG (transparent) en **haut à droite** de chaque frame d'une vidéo ou d'une photo
-- Respecte les règles de placement pour les réseaux sociaux : logo à **15% de la largeur**, marges de **5% (X) et 7% (Y)**
-- Export vidéo **quasi sans perte** (H.264, CRF 18, audio copié intact)
-- Export photo en PNG sans perte ou JPEG qualité 97
-- **Aucune donnée stockée** — tout est traité en mémoire, rien ne reste sur le serveur
-
----
-
-## Déploiement (gratuit, 3 minutes)
-
-### 1. Mettre les fichiers sur GitHub
-
-Crée un nouveau repo GitHub public et pousse ces 4 fichiers :
-
-```
-app.py
-requirements.txt
-packages.txt
-README.md
-```
-
-### 2. Déployer sur Streamlit Cloud
-
-1. Va sur **[share.streamlit.io](https://share.streamlit.io)**
-2. Connecte ton compte GitHub
-3. Clique sur **"New app"**
-4. Sélectionne ton repo, branche `main`, fichier principal `app.py`
-5. Clique **Deploy**
-
-> Streamlit Cloud installe automatiquement FFmpeg grâce au fichier `packages.txt`. Aucune configuration supplémentaire.
+<p align="center">
+  <img src="https://img.shields.io/badge/Streamlit-FF4B4B?style=flat-square&logo=streamlit&logoColor=white" />
+  <img src="https://img.shields.io/badge/FFmpeg-007808?style=flat-square&logo=ffmpeg&logoColor=white" />
+  <img src="https://img.shields.io/badge/Python-3.10+-3776AB?style=flat-square&logo=python&logoColor=white" />
+</p>
 
 ---
 
-## Utilisation en local
+## Fonctionnalités
 
-**Prérequis :** Python 3.9+, FFmpeg installé sur ta machine.
+| Onglet | Description |
+|--------|-------------|
+| **Vidéo** | Incrustation du logo Luluflix en coin haut-droit, export MP4 H.264 |
+| **Photo** | Incrustation du logo sur PNG / JPG, export sans perte |
+| **Capture** | Extraction d'une frame précise depuis une vidéo, export PNG |
+| **Découpe** | Découpe d'un segment vidéo par points de début et de fin, sans réencodage |
+
+---
+
+## Lancer en local
+
+**Prérequis** : Python 3.10+, FFmpeg installé sur le système.
 
 ```bash
-# Installer FFmpeg
-# macOS
-brew install ffmpeg
-
-# Ubuntu / Debian
-sudo apt install ffmpeg
-
-# Windows → https://ffmpeg.org/download.html
+# Cloner le dépôt
+git clone https://github.com/lucasbe-lpr/app-watermark.git
+cd app-watermark
 
 # Installer les dépendances Python
 pip install -r requirements.txt
 
-# Lancer l'app
+# Lancer l'application
 streamlit run app.py
 ```
 
-L'app s'ouvre automatiquement sur `http://localhost:8501`.
+L'app s'ouvre automatiquement sur [http://localhost:8501](http://localhost:8501).
 
 ---
 
-## Utilisation
+## Déploiement sur Streamlit Cloud
 
-1. **Onglet Vidéo ou Photo** selon ton fichier source
-2. Dépose (ou parcours) ta vidéo / image
-3. Dépose ton logo PNG (avec canal alpha/transparence)
-4. Un aperçu s'affiche automatiquement avec le logo positionné
-5. Pour la vidéo : clique sur **"OK Générer le rendu"** et attends la barre de progression
-6. Clique sur **"💾 Enregistrer sous..."** pour télécharger
+1. Forker ou pusher ce dépôt sur votre compte GitHub
+2. Aller sur [share.streamlit.io](https://share.streamlit.io)
+3. Sélectionner le dépôt, la branche `main` et le fichier `app.py`
+4. Cliquer sur **Deploy** — FFmpeg est installé automatiquement via `packages.txt`
 
 ---
 
-## Logique de placement du logo
-
-Pour une image ou vidéo de dimensions `W × H` :
+## Structure du projet
 
 ```
-Largeur logo  = W × 0.15
-Marge X       = W × 0.05
-Marge Y       = H × 0.07
-
-Position X    = W - Largeur logo - Marge X
-Position Y    = Marge Y
+app-watermark/
+├── app.py              # Application principale
+├── requirements.txt    # Dépendances Python
+├── packages.txt        # Paquets système (ffmpeg)
+├── luluflix.png        # Logo header
+├── flavicon.png        # Watermark incrusté
+└── logo.png            # Favicon onglet navigateur
 ```
 
 ---
 
 ## Stack technique
 
-| Composant | Outil |
-|-----------|-------|
-| Interface | Streamlit |
-| Traitement vidéo | FFmpeg (libx264, CRF 18) |
-| Traitement image | Pillow |
-| Déploiement | Streamlit Cloud (gratuit) |
+| Composant | Rôle |
+|-----------|------|
+| [Streamlit](https://streamlit.io) | Interface web |
+| [FFmpeg](https://ffmpeg.org) | Encodage vidéo, extraction de frames, découpe |
+| [Pillow](https://python-pillow.org) | Traitement d'image, incrustation du logo |
 
 ---
 
-*Lucas Bessonnat — Aucune donnée n'est conservée sur un serveur*
+## Placement du logo
+
+Le logo est positionné automatiquement en haut à droite de chaque média :
+
+- **Largeur** : 15 % de la largeur totale du média
+- **Position X** : `largeur − taille_logo − 5 % de la largeur`
+- **Position Y** : `7 % de la hauteur`
+
+---
+
+<p align="center">
+  Fait avec ♥ par <strong>Lucas Bessonnat</strong>
+</p>

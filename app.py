@@ -163,10 +163,57 @@ div[data-testid="stTabs"] [data-baseweb="tab-border"] { display: none !important
   font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase;
 }
 
-div[data-testid="stSlider"] > div > div > div { background: var(--blue) !important; }
+/* ── SLIDER ── */
+div[data-testid="stSlider"] {
+  padding: 0 !important;
+  margin-bottom: 0.2rem !important;
+}
 div[data-testid="stSlider"] label {
-  font-size: 0.7rem !important; font-weight: 500 !important; color: var(--muted) !important;
-  letter-spacing: 0.04em !important; text-transform: uppercase !important;
+  font-size: 0.7rem !important;
+  font-weight: 500 !important;
+  color: var(--muted) !important;
+  letter-spacing: 0.04em !important;
+  text-transform: uppercase !important;
+  font-family: 'Roboto', sans-serif !important;
+}
+/* Rail total — gris clair */
+div[data-testid="stSlider"] [data-baseweb="slider"] [role="slider"] ~ div,
+div[data-testid="stSlider"] [data-baseweb="slider"] > div > div:first-child {
+  background: var(--border) !important;
+  height: 3px !important;
+  border-radius: 99px !important;
+}
+/* Rail rempli — gris moyen, pas bleu */
+div[data-testid="stSlider"] [data-baseweb="slider"] > div > div:nth-child(2) {
+  background: var(--border-mid) !important;
+  height: 3px !important;
+  border-radius: 99px !important;
+}
+/* Thumb — blanc avec bordure grise propre */
+div[data-testid="stSlider"] [role="slider"] {
+  background: var(--white) !important;
+  border: 1.5px solid var(--border-mid) !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12) !important;
+  width: 16px !important;
+  height: 16px !important;
+  border-radius: 50% !important;
+  transition: border-color 0.12s, box-shadow 0.12s !important;
+}
+div[data-testid="stSlider"] [role="slider"]:hover,
+div[data-testid="stSlider"] [role="slider"]:focus {
+  border-color: var(--blue) !important;
+  box-shadow: 0 0 0 3px var(--blue-dim), 0 1px 3px rgba(0,0,0,0.12) !important;
+  outline: none !important;
+}
+/* Valeur affichée au-dessus du thumb */
+div[data-testid="stSlider"] [data-testid="stTickBarMin"],
+div[data-testid="stSlider"] [data-testid="stTickBarMax"] {
+  display: none !important;
+}
+div[data-testid="stSlider"] div[style*="position: absolute"] p {
+  font-size: 0.7rem !important;
+  color: var(--muted) !important;
+  font-family: 'Roboto', sans-serif !important;
 }
 
 div.stButton > button {
@@ -522,6 +569,21 @@ with tab_t:
           <div class="spec-cell"><span class="spec-k">Fin</span><span class="spec-v">{fmt_time(t_end)}</span></div>
           <div class="spec-cell"><span class="spec-k">Segment</span><span class="spec-v">{fmt_time(seg_dur)}</span></div>
         </div>""", unsafe_allow_html=True)
+
+        # Aperçus temps réel début / fin
+        col_a, col_b = st.columns(2)
+        with col_a:
+            st.markdown('<div class="preview-wrap"><div class="preview-bar">Début</div>', unsafe_allow_html=True)
+            with st.spinner(""):
+                frame_start = extract_frame(tp, t_start)
+            st.image(frame_start, use_container_width=True)
+            st.markdown('</div>', unsafe_allow_html=True)
+        with col_b:
+            st.markdown('<div class="preview-wrap"><div class="preview-bar">Fin</div>', unsafe_allow_html=True)
+            with st.spinner(""):
+                frame_end = extract_frame(tp, min(t_end, dur_t - 0.1))
+            st.image(frame_end, use_container_width=True)
+            st.markdown('</div>', unsafe_allow_html=True)
         if t_start >= t_end:
             st.markdown('<div class="status status-err">Le point de début doit être avant la fin.</div>', unsafe_allow_html=True)
         elif not st.session_state.trim_bytes:
